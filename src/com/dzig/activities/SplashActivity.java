@@ -1,6 +1,6 @@
 package com.dzig.activities;
 
-import utils.UserPreferences;
+import com.dzig.utils.UserPreferences;
 
 import com.dzig.R;
 
