@@ -9,6 +9,14 @@ public class AddCoordinateRequest extends BaseRequest{
         super(Method.POST, "coordinates");
     }
 
+    /**
+     *
+     * @param lat - latitude
+     * @param lon - longitude
+     * @param accuracy - accuracy
+     * @param creatorId - id of user that reporting the coordinate
+     * @return  request object
+     */
     public static BaseRequest newInstance(double lat, double lon, int accuracy, String creatorId){
        return new AddCoordinateRequest()
                .addParam("lat", lat)
