@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import java.util.UUID;
+
 public class UserPreferences {
 	private final SharedPreferences preferences;
 	
@@ -20,9 +22,10 @@ public class UserPreferences {
 	}
 	
 	/**
-	 * @return true if Intro screen sould be shown after app launch
+	 * @return true if Intro screen should be shown after app launch
 	 */
 	public boolean isIntroRequired(){
 		return false;
 	}
+
 }
