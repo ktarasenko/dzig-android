@@ -1,6 +1,7 @@
 package com.dzig.api.request;
 
 
+import com.dzig.api.response.BaseResponse;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -10,7 +11,7 @@ import org.apache.http.message.BasicNameValuePair;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class BaseRequest {
+public class BaseRequest<T extends BaseResponse> {
 
     protected enum Method {
         GET, POST, PUT, DELETE
@@ -86,32 +87,4 @@ public class BaseRequest {
         return  request;
     }
 
-
-//    public HttpUriRequest createHttpRequest(AbstractRequest<? extends AbstractResponse> request) {
-//        HttpUriRequest httpUriRequest = null;
-//        request.addNameValuePair("device_apn", mApid);
-//        httpUriRequest = request.createHttpRequest(mBaseUrl);
-//        if (httpUriRequest != null) {
-//            if (request.isCustom()) {
-//                httpUriRequest.addHeader("Accept", "*/*");
-//                httpUriRequest.addHeader("Accept-Encoding", "gzip,deflate");
-//            } else {
-//                httpUriRequest.addHeader("Accept-Encoding", "gzip");
-//            }
-//            httpUriRequest.addHeader("X-Client-Version", mVersion);
-//            httpUriRequest.addHeader("Accept-Language", mLanguage);
-//            httpUriRequest.addHeader(HEADER_APP_VERSION, mVersion);
-//            httpUriRequest.addHeader(HEADER_APP_CLIENT, "android");
-//            httpUriRequest.addHeader(HEADER_APP_ENV, BanjoApplication.PRODUCTION ?
-//                    "Production" : "Staging");
-//            if (mToken != null) {
-//                httpUriRequest.addHeader(HEADER_AUTH_TOKEN, mToken);
-//            }
-//            if (mLocation != null) {
-//                httpUriRequest.addHeader(HEADER_LOC_LAT, String.valueOf(mLocation.getLatitude()));
-//                httpUriRequest.addHeader(HEADER_LOC_LON, String.valueOf(mLocation.getLongitude()));
-//            }
-//        }
-//        return httpUriRequest;
-//    }
 }

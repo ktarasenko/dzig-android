@@ -17,7 +17,7 @@ public class BaseResponse {
     }
 
     public boolean isOk() {
-        return status == 200;
+        return status < 300;
     }
 
     public Date getAsOf() {

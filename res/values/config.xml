@@ -1,3 +1,4 @@
 <resources>
     <string name="base_url">http://dzig-server.ktarasenko.cloudbees.net/api/</string>
+    <string name="client_version">1</string>
 </resources>
