@@ -132,7 +132,7 @@ public abstract class BaseRequest<T extends  BaseResponse> {
         return (T) new BaseResponse(statusCode, ParseHelpers.parseDate(obj.optString("asOf")),  obj.optString("errorMessage", "Unknown error"));
     }
 
-    public abstract T parseResponse(int status, JSONObject response);
+    public abstract T parseResponse(int status, JSONObject response) throws JSONException;
 
     public T createErrorResponse(String message){
        return  (T) new BaseResponse(message);
