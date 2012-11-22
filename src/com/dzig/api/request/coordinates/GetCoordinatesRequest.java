@@ -2,9 +2,12 @@ package com.dzig.api.request.coordinates;
 
 
 import com.dzig.api.request.BaseRequest;
+import com.dzig.api.response.coordinates.GetCoordinatesResponse;
+import org.apache.http.HttpResponse;
+import org.json.JSONObject;
 
 
-public class GetCoordinatesRequest extends BaseRequest{
+public class GetCoordinatesRequest extends BaseRequest<GetCoordinatesResponse>{
 
     protected GetCoordinatesRequest() {
         super(BaseRequest.Method.GET, "coordinates");
@@ -23,6 +26,11 @@ public class GetCoordinatesRequest extends BaseRequest{
      */
     public static BaseRequest newInstance(String creatorId){
         return new GetCoordinatesRequest().addParam("creator", creatorId);
+    }
+
+    @Override
+    public GetCoordinatesResponse parseResponse(int status, JSONObject response) {
+        return null;
     }
 }
 

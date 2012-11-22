@@ -2,8 +2,12 @@ package com.dzig.api.request.coordinates;
 
 
 import com.dzig.api.request.BaseRequest;
+import com.dzig.api.response.BaseResponse;
+import com.dzig.api.response.coordinates.AddCoordinateResponse;
+import org.apache.http.HttpResponse;
+import org.json.JSONObject;
 
-public class AddCoordinateRequest extends BaseRequest{
+public class AddCoordinateRequest extends BaseRequest<AddCoordinateResponse>{
 
     protected AddCoordinateRequest() {
         super(Method.POST, "coordinates");
@@ -24,5 +28,10 @@ public class AddCoordinateRequest extends BaseRequest{
                .addParam("accuracy", accuracy)
                .addParam("creator", creatorId);
 
+    }
+
+    @Override
+    public AddCoordinateResponse parseResponse(int status, JSONObject response) {
+        return null;
     }
 }

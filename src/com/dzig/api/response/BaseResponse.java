@@ -4,12 +4,22 @@ import java.util.Date;
 
 public class BaseResponse {
 
-    private final int status;
-    private final Date asOf;
+    protected final int status;
+    protected final Date asOf;
+    protected String errorMessage;
 
     public BaseResponse(int status, Date asOf) {
         this.status = status;
         this.asOf = asOf;
+    }
+
+    public BaseResponse(String errorMessage) {
+        this(500, new Date(), errorMessage);
+    }
+
+    public BaseResponse(int status, Date asOf, String errorMessage) {
+        this(status, asOf);
+        this.errorMessage = errorMessage;
     }
 
     public int getStatus() {
@@ -23,4 +33,9 @@ public class BaseResponse {
     public Date getAsOf() {
         return asOf;
     }
+
+    public String getErrorMessage(){
+        return errorMessage;
+    }
+
 }

@@ -5,7 +5,7 @@ import android.os.Parcelable;
 
 import java.util.Date;
 
-public class Coordinates implements Parcelable{
+public class Coordinate implements Parcelable{
 
     private  final String id;
     private  final String creator;
@@ -15,7 +15,7 @@ public class Coordinates implements Parcelable{
     private  final int accuracy;
 
 
-    public Coordinates(String id, String creator, Date date, double lat, double lon, int accuracy) {
+    public Coordinate(String id, String creator, Date date, double lat, double lon, int accuracy) {
         this.id = id;
         this.creator = creator;
         this.date = date;
@@ -63,10 +63,10 @@ public class Coordinates implements Parcelable{
         out.writeInt(accuracy);
     }
 
-    public static final Parcelable.Creator<Coordinates> CREATOR
-            = new Parcelable.Creator<Coordinates>() {
-        public Coordinates createFromParcel(Parcel in) {
-            return new Coordinates(
+    public static final Parcelable.Creator<Coordinate> CREATOR
+            = new Parcelable.Creator<Coordinate>() {
+        public Coordinate createFromParcel(Parcel in) {
+            return new Coordinate(
                     in.readString(),
                     in.readString(),
                     new Date(in.readLong()),
@@ -75,8 +75,8 @@ public class Coordinates implements Parcelable{
                     in.readInt());
         }
 
-        public Coordinates[] newArray(int size) {
-            return new Coordinates[size];
+        public Coordinate[] newArray(int size) {
+            return new Coordinate[size];
         }
     };
 }

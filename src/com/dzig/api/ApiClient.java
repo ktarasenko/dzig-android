@@ -3,12 +3,15 @@ package com.dzig.api;
 
 import android.content.Context;
 import android.net.http.AndroidHttpClient;
+import android.util.Log;
+import com.dzig.BuildConfig;
 import com.dzig.R;
 import com.dzig.api.request.BaseRequest;
 import com.dzig.api.response.BaseResponse;
-import com.dzig.api.response.ErrorResponse;
 import com.dzig.utils.Logger;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.IOException;
 import java.util.Date;
@@ -19,21 +22,25 @@ public class ApiClient {
 
     private final String baseUrl;
     private final String clientVersion;
-    private final AndroidHttpClient client;
+    private final DefaultHttpClient client;
 
 
     public ApiClient(Context context) {
         Logger.debug(TAG, "ApiClient init");
-        client = AndroidHttpClient.newInstance("android");
+        client = new DefaultHttpClient();
+        if (BuildConfig.DEBUG){
+//            client.enableCurlLogging(TAG, Log.DEBUG);
+        }
         baseUrl = context.getString(R.string.base_url);
         clientVersion = context.getString(R.string.client_version);
     }
 
 
 
-    private HttpUriRequest createHttpRequest(BaseRequest<? extends BaseResponse> request) throws IOException {
+    private HttpUriRequest createHttpRequest(BaseRequest<?> request) throws IOException {
         HttpUriRequest httpUriRequest = null;
         httpUriRequest = request.createHttpRequest(baseUrl);
+        Logger.debug(TAG, "preparing request : " + httpUriRequest.getURI());
         if (httpUriRequest != null) {
             httpUriRequest.addHeader("Accept-Encoding", "gzip");
             httpUriRequest.addHeader("X-Client-Version", "1");
@@ -43,17 +50,17 @@ public class ApiClient {
     }
 
 
-    public BaseResponse execute(BaseRequest<? extends BaseResponse> request) {
+    public <T extends BaseResponse> T execute(BaseRequest<T> request) {
         try {
             HttpUriRequest httpUriRequest = createHttpRequest(request);
-//             client.execute(httpUriRequest);
-            //parse response
+            HttpResponse response = client.execute(httpUriRequest);
+            request.parseResponse(response);
         } catch (IOException e) {
-            Logger.error(TAG, "unable to execute request", e);
-            return new ErrorResponse("unable to execute request");
+            Logger.error(TAG, "unable to execute request: " + e.getMessage(), e);
+            return request.createErrorResponse("unable to execute request");
         }
-
-        return new BaseResponse(200, new Date());
+        Logger.error(TAG, "This should newer happened " + request);
+        return request.createErrorResponse("This should newer happened");
     }
 
 
