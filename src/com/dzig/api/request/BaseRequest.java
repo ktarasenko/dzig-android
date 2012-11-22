@@ -54,22 +54,22 @@ public abstract class BaseRequest<T extends  BaseResponse> {
     }
 
 
-    public BaseRequest addParam(String name, String value){
+    public BaseRequest<T> addParam(String name, String value){
         params.add(new BasicNameValuePair(name, value));
         return this;
     }
 
-    public BaseRequest addParam(String name, double value){
+    public BaseRequest<T> addParam(String name, double value){
         params.add(new BasicNameValuePair(name, String.valueOf(value)));
         return this;
     }
 
-    public BaseRequest addParam(String name, int value){
+    public BaseRequest<T> addParam(String name, int value){
         params.add(new BasicNameValuePair(name, String.valueOf(value)));
         return this;
     }
 
-    public BaseRequest addParam(String name, Object value){
+    public BaseRequest<T> addParam(String name, Object value){
         params.add(new BasicNameValuePair(name, value.toString()));
         return this;
     }
@@ -112,7 +112,7 @@ public abstract class BaseRequest<T extends  BaseResponse> {
                 JSONObject obj = new JSONObject(sb.toString());
 
                 if (statusCode < 400) {
-                    parseResponse(statusCode, obj);
+                    parseResponse(obj);
                 } else {
                     parseErrorResponse(statusCode, obj);
                 }
@@ -129,10 +129,11 @@ public abstract class BaseRequest<T extends  BaseResponse> {
     }
 
     private T parseErrorResponse(int statusCode, JSONObject obj) {
-        return (T) new BaseResponse(statusCode, ParseHelpers.parseDate(obj.optString("asOf")),  obj.optString("errorMessage", "Unknown error"));
+        return (T) new BaseResponse(statusCode, ParseHelpers.parseDate(obj.optString("asOf")),
+                ParseHelpers.parseErrorMessage(obj));
     }
 
-    public abstract T parseResponse(int status, JSONObject response) throws JSONException;
+    public abstract T parseResponse(JSONObject response) throws JSONException;
 
     public T createErrorResponse(String message){
        return  (T) new BaseResponse(message);

@@ -21,7 +21,7 @@ public class ParseHelpers {
     }
 
 
-    public <T> ArrayList<T> parseList(JSONArray array, ComplexCreator<T> creator) throws JSONException {
+    public static <T> ArrayList<T> parseList(JSONArray array, ComplexCreator<T> creator) throws JSONException {
         if (array != null && array.length() > 0) {
             ArrayList<T> list =  new ArrayList<T>(array.length());
             for (int i = 0; i < array.length(); i++){
@@ -30,4 +30,7 @@ public class ParseHelpers {
         } return new ArrayList<T>(0);
     }
 
+    public static String parseErrorMessage(JSONObject obj) {
+        return obj.optString("errorMessage", "Unknown error");
+    }
 }

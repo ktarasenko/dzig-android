@@ -35,11 +35,7 @@ public class AddCoordinateRequest extends BaseRequest<AddCoordinateResponse>{
     }
 
     @Override
-    public AddCoordinateResponse parseResponse(int status,JSONObject response) throws JSONException{
-        if (response != null && response.has("coordinate")){
-           return new AddCoordinateResponse(status, new Date(),
-                    Coordinate.CREATOR.createFromJSON(response.getJSONObject("coordinate")));
-        }
-        return new AddCoordinateResponse(status, new Date(), (Coordinate)null);
+    public AddCoordinateResponse parseResponse(JSONObject response) throws JSONException{
+        return new AddCoordinateResponse(Coordinate.CREATOR.createFromJSON(response.getJSONObject("coordinate")));
     }
 }
