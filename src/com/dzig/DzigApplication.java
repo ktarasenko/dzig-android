@@ -43,12 +43,5 @@ public class DzigApplication extends Application{
         Logger.debug(TAG, "DzigApplication onCreate");
         client = new ApiClient(getApplicationContext());
 
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//               client.execute(GetCoordinatesRequest.newInstance());
-//            }
-//        }).start();
-
     }
 }
