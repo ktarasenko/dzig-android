@@ -23,6 +23,7 @@ public class ApiClient {
 
 
     public ApiClient(Context context) {
+        Logger.debug(TAG, "ApiClient init");
         client = AndroidHttpClient.newInstance("android");
         baseUrl = context.getString(R.string.base_url);
         clientVersion = context.getString(R.string.client_version);

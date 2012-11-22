@@ -9,6 +9,6 @@
 	    android:layout_width="match_parent"
 	    android:layout_height="match_parent"
 	    android:clickable="true"
-	    android:apiKey="Your Maps API Key goes here" />
+	    android:apiKey="@string/map_key" />
 	
 </LinearLayout>
