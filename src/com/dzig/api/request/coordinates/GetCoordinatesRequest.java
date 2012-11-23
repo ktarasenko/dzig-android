@@ -33,7 +33,12 @@ public class GetCoordinatesRequest extends BaseRequest<GetCoordinatesResponse>{
 
     @Override
     public GetCoordinatesResponse parseResponse(JSONObject response) throws JSONException{
-        return new GetCoordinatesResponse(ParseHelpers.parseList(response.getJSONArray("coordinates"), Coordinate.CREATOR));
+        return new GetCoordinatesResponse(ParseHelpers.parseList(response.getJSONArray("data"), Coordinate.CREATOR));
+    }
+
+    @Override
+    public GetCoordinatesResponse createErrorResponse(String message) {
+        return new GetCoordinatesResponse(message);
     }
 }
 

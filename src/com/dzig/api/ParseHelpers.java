@@ -27,7 +27,9 @@ public class ParseHelpers {
             for (int i = 0; i < array.length(); i++){
                 list.add(creator.createFromJSON(array.getJSONObject(i)));
             }
-        } return new ArrayList<T>(0);
+            return list;
+        }
+        return new ArrayList<T>(0);
     }
 
     public static String parseErrorMessage(JSONObject obj) {

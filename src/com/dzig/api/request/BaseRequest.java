@@ -2,6 +2,7 @@ package com.dzig.api.request;
 
 
 import android.util.JsonReader;
+import com.dzig.api.ApiClient;
 import com.dzig.api.ParseHelpers;
 import com.dzig.api.response.BaseResponse;
 import com.dzig.utils.Logger;
@@ -101,20 +102,23 @@ public abstract class BaseRequest<T extends  BaseResponse> {
     public T parseResponse(HttpResponse response) throws IOException{
         final int statusCode = response.getStatusLine().getStatusCode();
         HttpEntity entity = response.getEntity();
-        BufferedReader reader = null;
+        InputStreamReader reader = null;
         if (entity != null) {
             try {
-                reader = new BufferedReader(new InputStreamReader(entity.getContent(), "UTF-8"));
+                reader = new InputStreamReader(entity.getContent(), "UTF-8");
                 StringBuilder sb = new StringBuilder();
-                while (reader.ready()){
-                    sb.append(reader.readLine());
+                int l = -1;
+                char[] buf = new char[1024];
+                while ((l = reader.read(buf)) > -1){
+                    sb.append(buf, 0, l);
                 }
+                Logger.debug(ApiClient.TAG, "Response received: " + sb);
                 JSONObject obj = new JSONObject(sb.toString());
 
                 if (statusCode < 400) {
-                    parseResponse(obj);
+                    return parseResponse(obj);
                 } else {
-                    parseErrorResponse(statusCode, obj);
+                    return parseErrorResponse(obj);
                 }
             } catch (JSONException jex){
                 Logger.error(TAG, "Unable to parse json", jex);
@@ -128,14 +132,11 @@ public abstract class BaseRequest<T extends  BaseResponse> {
         return createErrorResponse("Unable to parse the output");
     }
 
-    private T parseErrorResponse(int statusCode, JSONObject obj) {
-        return (T) new BaseResponse(statusCode, ParseHelpers.parseDate(obj.optString("asOf")),
-                ParseHelpers.parseErrorMessage(obj));
+    private T parseErrorResponse(JSONObject obj) {
+        return createErrorResponse(ParseHelpers.parseErrorMessage(obj));
     }
 
     public abstract T parseResponse(JSONObject response) throws JSONException;
 
-    public T createErrorResponse(String message){
-       return  (T) new BaseResponse(message);
-    }
+    public abstract T createErrorResponse(String message);
 }

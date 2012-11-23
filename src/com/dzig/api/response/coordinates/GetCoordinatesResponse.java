@@ -23,7 +23,7 @@ public class GetCoordinatesResponse extends GetDataResponse<ArrayList<Coordinate
     }
 
     public GetCoordinatesResponse(ArrayList<Coordinate> list){
-        coordinatesList.addAll(coordinatesList);
+        coordinatesList.addAll(list);
     }
 
     @Override
