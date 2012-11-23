@@ -36,6 +36,11 @@
             android:name=".activities.HomeActivity">
         </activity>
         
+        <activity
+            android:name=".activities.CustomMapActivity">
+        </activity>
+        
+        
         <service android:name=".location.LocationService" />
     </application>
 

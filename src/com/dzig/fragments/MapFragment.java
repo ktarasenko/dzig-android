@@ -12,6 +12,7 @@ public class MapFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.fragment_map, container);
+//		v.findViewById(id)
 		return v;
 	}
 }
