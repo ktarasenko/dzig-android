@@ -4,8 +4,12 @@ package com.dzig.api.request.coordinates;
 import com.dzig.api.request.BaseRequest;
 import com.dzig.api.response.BaseResponse;
 import com.dzig.api.response.coordinates.AddCoordinateResponse;
+import com.dzig.model.Coordinate;
 import org.apache.http.HttpResponse;
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Date;
 
 public class AddCoordinateRequest extends BaseRequest<AddCoordinateResponse>{
 
@@ -31,7 +35,7 @@ public class AddCoordinateRequest extends BaseRequest<AddCoordinateResponse>{
     }
 
     @Override
-    public AddCoordinateResponse parseResponse(int status, JSONObject response) {
-        return null;
+    public AddCoordinateResponse parseResponse(JSONObject response) throws JSONException{
+        return new AddCoordinateResponse(Coordinate.CREATOR.createFromJSON(response.getJSONObject("coordinate")));
     }
 }

@@ -2,6 +2,8 @@ package com.dzig.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import com.dzig.api.ParseHelpers;
+import org.json.JSONObject;
 
 import java.util.Date;
 
@@ -63,8 +65,8 @@ public class Coordinate implements Parcelable{
         out.writeInt(accuracy);
     }
 
-    public static final Parcelable.Creator<Coordinate> CREATOR
-            = new Parcelable.Creator<Coordinate>() {
+    public static final ComplexCreator<Coordinate> CREATOR
+            = new ComplexCreator<Coordinate>() {
         public Coordinate createFromParcel(Parcel in) {
             return new Coordinate(
                     in.readString(),
@@ -73,7 +75,19 @@ public class Coordinate implements Parcelable{
                     in.readDouble(),
                     in.readDouble(),
                     in.readInt());
+
         }
+
+        public Coordinate createFromJSON(JSONObject in) {
+            return new Coordinate(
+                    in.optString("id"),
+                    in.optString("creator"),
+                    ParseHelpers.parseDate(in.optString("date")),
+                    in.optDouble("lat"),
+                    in.optDouble("lon"),
+                    in.optInt("accuracy"));
+        }
+
 
         public Coordinate[] newArray(int size) {
             return new Coordinate[size];

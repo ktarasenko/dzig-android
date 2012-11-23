@@ -6,6 +6,8 @@ import android.os.Build;
 import android.os.StrictMode;
 import com.dzig.api.ApiClient;
 import com.dzig.api.request.coordinates.GetCoordinatesRequest;
+import com.dzig.api.response.coordinates.GetCoordinatesResponse;
+import com.dzig.api.task.BasicTask;
 import com.dzig.utils.Logger;
 
 public class DzigApplication extends Application{
@@ -43,12 +45,13 @@ public class DzigApplication extends Application{
         Logger.debug(TAG, "DzigApplication onCreate");
         client = new ApiClient(getApplicationContext());
 
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//               client.execute(GetCoordinatesRequest.newInstance());
-//            }
-//        }).start();
+        new BasicTask<GetCoordinatesRequest, GetCoordinatesResponse>().execute(GetCoordinatesRequest.newInstance());
 
     }
+
+    public ApiClient getClient(){
+         return client;
+    }
+
+
 }

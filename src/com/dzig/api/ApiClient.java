@@ -29,6 +29,8 @@ public class ApiClient {
         Logger.debug(TAG, "ApiClient init");
         client = new DefaultHttpClient();
         if (BuildConfig.DEBUG){
+            java.util.logging.Logger.getLogger("httpclient.wire.header").setLevel(java.util.logging.Level.FINEST);
+            java.util.logging.Logger.getLogger("httpclient.wire.content").setLevel(java.util.logging.Level.FINEST);
 //            client.enableCurlLogging(TAG, Log.DEBUG);
         }
         baseUrl = context.getString(R.string.base_url);
@@ -54,13 +56,12 @@ public class ApiClient {
         try {
             HttpUriRequest httpUriRequest = createHttpRequest(request);
             HttpResponse response = client.execute(httpUriRequest);
-            request.parseResponse(response);
+            return request.parseResponse(response);
         } catch (IOException e) {
             Logger.error(TAG, "unable to execute request: " + e.getMessage(), e);
             return request.createErrorResponse("unable to execute request");
         }
-        Logger.error(TAG, "This should newer happened " + request);
-        return request.createErrorResponse("This should newer happened");
+
     }
 
 
