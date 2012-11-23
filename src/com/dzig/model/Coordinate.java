@@ -67,7 +67,8 @@ public class Coordinate implements Parcelable{
 
     public static final ComplexCreator<Coordinate> CREATOR
             = new ComplexCreator<Coordinate>() {
-        public Coordinate createFromParcel(Parcel in) {
+        @Override
+		public Coordinate createFromParcel(Parcel in) {
             return new Coordinate(
                     in.readString(),
                     in.readString(),
@@ -78,7 +79,8 @@ public class Coordinate implements Parcelable{
 
         }
 
-        public Coordinate createFromJSON(JSONObject in) {
+        @Override
+		public Coordinate createFromJSON(JSONObject in) {
             return new Coordinate(
                     in.optString("id"),
                     in.optString("creator"),
@@ -89,7 +91,8 @@ public class Coordinate implements Parcelable{
         }
 
 
-        public Coordinate[] newArray(int size) {
+        @Override
+		public Coordinate[] newArray(int size) {
             return new Coordinate[size];
         }
     };
