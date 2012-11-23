@@ -4,6 +4,7 @@ package com.dzig;
 import android.app.Application;
 import android.os.Build;
 import android.os.StrictMode;
+import android.widget.Toast;
 import com.dzig.api.ApiClient;
 import com.dzig.api.request.coordinates.GetCoordinatesRequest;
 import com.dzig.api.response.coordinates.GetCoordinatesResponse;
@@ -34,18 +35,16 @@ public class DzigApplication extends Application{
                     .detectAll()
                     .penaltyLog()
                     .build());
-            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-                    .detectLeakedSqlLiteObjects()
-                    .detectLeakedClosableObjects()
-                    .penaltyLog()
-                    .penaltyDeath()
-                    .build());
+//            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+//                    .detectLeakedSqlLiteObjects()
+////                    .detectLeakedClosableObjects()
+//                    .penaltyLog()
+//                    .penaltyDeath()
+//                    .build());
         }
         super.onCreate();
         Logger.debug(TAG, "DzigApplication onCreate");
         client = new ApiClient(getApplicationContext());
-
-        new BasicTask<GetCoordinatesRequest, GetCoordinatesResponse>().execute(GetCoordinatesRequest.newInstance());
 
     }
 

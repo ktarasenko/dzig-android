@@ -25,8 +25,8 @@ public class AddCoordinateRequest extends BaseRequest<AddCoordinateResponse>{
      * @param creatorId - id of user that reporting the coordinate
      * @return  request object
      */
-    public static BaseRequest newInstance(double lat, double lon, int accuracy, String creatorId){
-       return new AddCoordinateRequest()
+    public static AddCoordinateRequest newInstance(double lat, double lon, int accuracy, String creatorId){
+       return (AddCoordinateRequest) new AddCoordinateRequest()
                .addParam("lat", lat)
                .addParam("lon", lon)
                .addParam("accuracy", accuracy)
@@ -37,5 +37,10 @@ public class AddCoordinateRequest extends BaseRequest<AddCoordinateResponse>{
     @Override
     public AddCoordinateResponse parseResponse(JSONObject response) throws JSONException{
         return new AddCoordinateResponse(Coordinate.CREATOR.createFromJSON(response.getJSONObject("coordinate")));
+    }
+
+    @Override
+    public AddCoordinateResponse createErrorResponse(String message) {
+        return new AddCoordinateResponse(message);
     }
 }
