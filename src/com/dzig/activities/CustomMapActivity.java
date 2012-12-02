@@ -13,6 +13,7 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.util.Log;
 
 import com.dzig.R;
 import com.dzig.model.Coordinate;
@@ -24,10 +25,12 @@ import com.google.android.maps.OverlayItem;
 
 public class CustomMapActivity extends MapActivity {
 	public static final String ACTION_UPDATE_POINTS = "com.dzig.activities.CustomMapActivity.ACTION_UPDATE_POINTS";
+	public static final String ACTION_GET_POINTS = "com.dzig.activities.CustomMapActivity.ACTION_GET_POINTS";
 	/**
 	 * Key for List<Coordinate> bundle extra, ACTION_UPDATE_POINTS event
 	 */
 	public static final String EXTRA_POINTS = "com.dzig.activities.CustomMapActivity.EXTRA_POINTS";
+	private static final String TAG = "CustomMapActivity";
 	
 	
 	private MapView mapView; 
@@ -41,13 +44,12 @@ public class CustomMapActivity extends MapActivity {
 		mapView = (MapView) findViewById(R.id.mapview);
 		mapOverlay = new MapOverlay(getResources().getDrawable(R.drawable.map_marker));
 		mapView.getOverlays().add(mapOverlay);
-		
-		new Test().execute(10);
 	}
 	
 	@Override
 	protected void onResume() {
 		registerReceiver(receiver, new IntentFilter(ACTION_UPDATE_POINTS));
+		sendBroadcast(new Intent(ACTION_GET_POINTS));
 		super.onResume();
 	}
 	@Override
@@ -73,7 +75,7 @@ public class CustomMapActivity extends MapActivity {
 			items.add(overlayitem);	
 		}
 		mapOverlay.setOverlays(items);
-		
+		mapView.invalidate();
 	}
 	
 	private static int toIntE6(double value){
@@ -116,6 +118,7 @@ public class CustomMapActivity extends MapActivity {
 			items.clear();
 			items.addAll(overlays);
 		    populate();
+		    
 		}
 		
 		@Override
@@ -129,24 +132,5 @@ public class CustomMapActivity extends MapActivity {
 		}
 		
 	}
-
 	
-	private class Test extends AsyncTask<Integer, Void, Void>{
-		@Override
-		protected Void doInBackground(Integer... params) {
-			Intent intent = new Intent(ACTION_UPDATE_POINTS);
-			Random random = new Random();
-			
-			ArrayList<Coordinate> coordinates = new ArrayList<Coordinate>();
-			for (int i = 0; i < params[0]; i++) {
-				double lat = 50.422519 + random.nextDouble()/10;
-				double lon = 30.50344 + random.nextDouble()/10;
-				coordinates.add(new Coordinate(""+i, "" + (char)('a'+i), new Date(), lat, lon, 5));
-			}
-			
-			intent.putParcelableArrayListExtra(EXTRA_POINTS, coordinates);
-			sendBroadcast(intent);
-			return null;
-		}
-	}
 }

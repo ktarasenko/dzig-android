@@ -14,14 +14,16 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 
-public class LoginActivity extends FragmentActivity{
+import com.dzig.R;
+import com.dzig.fragments.LoginFragment.LoginFragmentContainer;
+
+public class LoginActivity extends FragmentActivity implements LoginFragmentContainer{
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_login);
 //        runAuthSnippet();
-		startActivity(new Intent(this, HomeActivity.class));
-		finish();
 	}
 	
 	private String doGetAccounts() {
@@ -95,4 +97,10 @@ public class LoginActivity extends FragmentActivity{
         }
         return authToken;
     }
+
+	@Override
+	public void performLogin(String username, String password) {
+		startActivity(new Intent(this, HomeActivity.class));
+		finish();
+	}
 }
