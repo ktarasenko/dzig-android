@@ -32,7 +32,7 @@ public class LocationService extends Service {
 		registerReceiver(broadcastReceiver, new IntentFilter(CustomMapActivity.ACTION_GET_POINTS));
 		if (scheduler == null){
 			scheduler = Executors.newScheduledThreadPool(1);
-			scheduler.scheduleAtFixedRate(updatePointsRunable, 0, 2, TimeUnit.SECONDS);
+			scheduler.scheduleAtFixedRate(updatePointsRunable, 0, 1, TimeUnit.SECONDS);
 		}
 		return START_STICKY;
 	}
@@ -89,8 +89,8 @@ public class LocationService extends Service {
 		Random random = new Random();
 		
 		for (Coordinate coordinate : coordinates) {
-			double dlat = (-1 + random.nextDouble()*2)/100;
-			double dlon = (-1 + random.nextDouble()*2)/100;
+			double dlat = (-1 + random.nextDouble()*2)/1000;
+			double dlon = (-1 + random.nextDouble()*2)/1000;
 			newCoordinates.add(new Coordinate(coordinate.getId(), coordinate.getCreator(), new Date(), 
 					coordinate.getLat()+dlat, coordinate.getLon()+dlon, coordinate.getAccuracy()));
 		}
