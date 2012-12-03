@@ -1,18 +1,12 @@
 package com.dzig.fragments;
 
-import com.dzig.R;
+import android.app.Activity;
 
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import com.dzig.activities.CustomMapActivity;
 
-public class MapFragment extends Fragment {
+public class MapFragment extends ActivityHostFragment {
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View v = inflater.inflate(R.layout.fragment_map, container);
-//		v.findViewById(id)
-		return v;
+	protected Class<? extends Activity> getActivityClass() {
+		return CustomMapActivity.class;
 	}
 }

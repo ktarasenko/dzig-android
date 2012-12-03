@@ -18,7 +18,6 @@ public class DzigApplication extends Application{
     private ApiClient client;
 
     public DzigApplication(){
-        super();
         Logger.debug(TAG, "DzigApplication init");
         instance = this;
     }
@@ -44,8 +43,6 @@ public class DzigApplication extends Application{
         super.onCreate();
         Logger.debug(TAG, "DzigApplication onCreate");
         client = new ApiClient(getApplicationContext());
-
-        new BasicTask<GetCoordinatesRequest, GetCoordinatesResponse>().execute(GetCoordinatesRequest.newInstance());
 
     }
 
