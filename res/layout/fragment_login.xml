@@ -11,7 +11,7 @@
         android:layout_alignParentTop="true"
         android:text="@string/login_login_label"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-
+    
     <EditText
         android:id="@+id/login"
         android:layout_width="wrap_content"
@@ -32,7 +32,7 @@
         android:layout_below="@+id/login"
         android:text="@string/login_password_label"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-
+    
     <EditText
         android:id="@+id/password"
         android:layout_width="wrap_content"
@@ -42,7 +42,7 @@
         android:layout_below="@+id/password_label"
         android:ems="10"
         android:inputType="textPassword" />
-
+    
     <CheckBox
         android:id="@+id/remember_me"
         android:layout_width="wrap_content"
@@ -60,5 +60,5 @@
         android:layout_below="@+id/remember_me"
         android:layout_centerHorizontal="true"
         android:text="@string/login_sign_in_button" />
-
+    
 </RelativeLayout>
