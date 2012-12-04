@@ -35,9 +35,9 @@ public class LoginActivity extends FragmentActivity{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-        runAuthSnippet();
-//		startActivity(new Intent(this, HomeActivity.class));
-//		finish();
+//        runAuthSnippet();
+		startActivity(new Intent(this, HomeActivity.class));
+		finish();
 	}
 	
 	private String doGetAccounts() {
@@ -132,4 +132,10 @@ public class LoginActivity extends FragmentActivity{
         }
         return authToken;
     }
+
+	@Override
+	public void performLogin(String username, String password) {
+		startActivity(new Intent(this, HomeActivity.class));
+		finish();
+	}
 }
