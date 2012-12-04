@@ -133,7 +133,7 @@ public class LoginActivity extends FragmentActivity{
         return authToken;
     }
 
-	@Override
+
 	public void performLogin(String username, String password) {
 		startActivity(new Intent(this, HomeActivity.class));
 		finish();
