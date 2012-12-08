@@ -5,17 +5,17 @@ import java.util.Date;
 public class BaseResponse {
 
     protected int status;
-    protected Date asOf;
+    protected String asOf;
     protected String errorMessage;
 
 
 
     public BaseResponse(String errorMessage) {
-        this(500, new Date(), errorMessage);
+        this(500, errorMessage);
     }
 
-    public BaseResponse(int status, Date asOf, String errorMessage) {
-        setMeta(status, asOf);
+    public BaseResponse(int status, String errorMessage) {
+        this.status = status;
         this.errorMessage = errorMessage;
     }
 
@@ -23,7 +23,7 @@ public class BaseResponse {
 
     }
 
-    public void setMeta(int status, Date date){
+    public void setMeta(int status, String date){
        this.status = status;
         this.asOf = date;
     }
@@ -36,7 +36,7 @@ public class BaseResponse {
         return status < 300;
     }
 
-    public Date getAsOf() {
+    public String getAsOf() {
         return asOf;
     }
 

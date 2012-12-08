@@ -18,8 +18,8 @@ public class GetCoordinatesResponse extends GetDataResponse<ArrayList<Coordinate
         super(errorMessage);
     }
 
-    public GetCoordinatesResponse(int status, Date asOf, String errorMessage) {
-        super(status, asOf, errorMessage);
+    public GetCoordinatesResponse(int status, String errorMessage) {
+        super(status, errorMessage);
     }
 
     public GetCoordinatesResponse(ArrayList<Coordinate> list){

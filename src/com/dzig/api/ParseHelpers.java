@@ -32,7 +32,7 @@ public class ParseHelpers {
         return new ArrayList<T>(0);
     }
 
-    public static String parseErrorMessage(JSONObject obj) {
-        return obj.optString("errorMessage", "Unknown error");
+    public static String parseErrorMessage(JSONObject meta) {
+        return meta.optString("errorMessage", "Unknown error");
     }
 }

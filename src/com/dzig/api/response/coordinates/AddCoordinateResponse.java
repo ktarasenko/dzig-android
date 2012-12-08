@@ -16,8 +16,8 @@ public class AddCoordinateResponse extends BaseResponse {
         super(errorMessage);
     }
 
-    public AddCoordinateResponse(int status, Date asOf, String errorMessage) {
-        super(status, asOf, errorMessage);
+    public AddCoordinateResponse(int status, String errorMessage) {
+        super(status, errorMessage);
     }
 
     public AddCoordinateResponse(Coordinate coordinate){

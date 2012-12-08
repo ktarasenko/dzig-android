@@ -11,11 +11,8 @@ import com.dzig.api.response.BaseResponse;
 import com.dzig.utils.Logger;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.IOException;
-import java.util.Date;
-import java.util.Queue;
 import java.util.concurrent.*;
 
 public class ApiClient {
@@ -36,7 +33,7 @@ public class ApiClient {
         if (BuildConfig.DEBUG){
             client.enableCurlLogging(TAG, Log.DEBUG);
         }
-        baseUrl = context.getString(R.string.base_url);
+        baseUrl = context.getString(R.string.base_url, context.getString(R.string.api_version));
         clientVersion = context.getString(R.string.client_version);
     }
 

@@ -12,8 +12,8 @@ public abstract class GetDataResponse<T> extends BaseResponse {
         super(errorMessage);
     }
 
-    public GetDataResponse(int status, Date asOf, String errorMessage) {
-        super(status, asOf, errorMessage);
+    public GetDataResponse(int status, String errorMessage) {
+        super(status, errorMessage);
     }
 
     public GetDataResponse(){
