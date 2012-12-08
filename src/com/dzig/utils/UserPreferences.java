@@ -28,4 +28,7 @@ public class UserPreferences {
 		return false;
 	}
 
+    public String getString(String key) {
+        return preferences.getString(key, "notfound");
+    }
 }
