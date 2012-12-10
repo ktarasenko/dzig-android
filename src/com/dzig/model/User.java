@@ -32,7 +32,7 @@ public class User implements Parcelable {
 
     @Override
     public int describeContents() {
-        return 2002;
+        return 2003;
     }
 
     @Override
