@@ -97,15 +97,18 @@ public class ApiClient {
     private <T extends BaseResponse> T executeRequest(BaseRequest<T> request)
                             throws InterruptedException, IOException {
         HttpUriRequest httpUriRequest = createHttpRequest(request);
-
-        if (lock.tryAcquire(WAITING_TIMEOUT, TimeUnit.SECONDS)){
-            Logger.debug(TAG, "lock aquired: ");
-            HttpResponse response = client.execute(httpUriRequest);
-            lock.release();
-            Logger.debug(TAG, "lock released: ");
-            return  request.parseResponse(response);
+        if (DzigApplication.getInstance().isConnected()){
+            if (lock.tryAcquire(WAITING_TIMEOUT, TimeUnit.SECONDS)){
+                Logger.debug(TAG, "lock aquired: ");
+                HttpResponse response = client.execute(httpUriRequest);
+                lock.release();
+                Logger.debug(TAG, "lock released: ");
+                return  request.parseResponse(response);
+            } else {
+                Logger.error(TAG, "lock not aquired:  timeout");
+            }
         } else {
-            Logger.error(TAG, "lock not aquired:  timeout");
+            return request.createErrorResponse(600, "No Internet Connection");
         }
 
         return request.createErrorResponse("unable to execute request");

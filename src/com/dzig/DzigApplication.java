@@ -2,6 +2,9 @@ package com.dzig;
 
 
 import android.app.Application;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.StrictMode;
 import com.dzig.api.ApiClient;
@@ -16,6 +19,7 @@ public class DzigApplication extends Application{
     private static final String TAG = "DzigApplication";
 
     private ApiClient client;
+    private ConnectivityManager connectivityManager;
 
     public DzigApplication(){
         Logger.debug(TAG, "DzigApplication init");
@@ -43,11 +47,21 @@ public class DzigApplication extends Application{
         super.onCreate();
         Logger.debug(TAG, "DzigApplication onCreate");
         client = new ApiClient(getApplicationContext());
+        connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
 
     }
 
     public ApiClient getClient(){
          return client;
+    }
+
+    public boolean isConnected(){
+        NetworkInfo nInfo = connectivityManager.getActiveNetworkInfo();
+        if (nInfo != null){
+            return nInfo.isConnectedOrConnecting();
+        }
+
+        return false;
     }
 
 

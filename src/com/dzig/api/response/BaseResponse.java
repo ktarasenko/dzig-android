@@ -9,7 +9,6 @@ public class BaseResponse {
     protected String errorMessage;
 
 
-
     public BaseResponse(String errorMessage) {
         this(500, errorMessage);
     }
@@ -34,6 +33,10 @@ public class BaseResponse {
 
     public boolean isOk() {
         return status < 300;
+    }
+
+    public boolean isConnected() {
+        return status != 600;
     }
 
     public String getAsOf() {
