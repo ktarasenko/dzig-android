@@ -19,4 +19,8 @@ public class UserResponse extends BaseResponse{
     public UserResponse(User user){
         this.user = user;
     }
+
+    public User getUser() {
+        return user;
+    }
 }

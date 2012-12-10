@@ -112,7 +112,7 @@ public abstract class BaseRequest<T extends  BaseResponse> {
                 }
                 Logger.debug(ApiClient.TAG, "Response received: " + sb);
 
-                if (statusCode != 200) {
+                if (statusCode == 200) {
                     JSONObject obj = new JSONObject(sb.toString());
                     JSONObject meta = obj.getJSONObject("meta");
                     statusCode = meta.getInt("status");

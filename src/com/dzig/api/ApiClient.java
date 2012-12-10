@@ -14,7 +14,13 @@ import com.dzig.api.response.user.UserResponse;
 import com.dzig.utils.Logger;
 import com.dzig.utils.UserPreferences;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.CookieStore;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.params.HttpClientParams;
+import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.impl.client.BasicCookieStore;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
 
 import java.io.IOException;
 import java.util.concurrent.*;
@@ -35,6 +41,10 @@ public class ApiClient {
     public ApiClient(Context context) {
         Logger.debug(TAG, "ApiClient init");
         client = AndroidHttpClient.newInstance("android");
+        HttpClientParams.setRedirecting(client.getParams(), true);
+        CookieStore cookieStore = new BasicCookieStore();
+        HttpContext httpContext = new BasicHttpContext();
+        httpContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
         lock = new Semaphore(1);
         if (BuildConfig.DEBUG){
             client.enableCurlLogging(TAG, Log.DEBUG);

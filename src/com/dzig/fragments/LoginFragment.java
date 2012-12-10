@@ -14,7 +14,7 @@ public class LoginFragment extends Fragment{
 	public interface LoginFragmentContainer {
 		void performLogin(String username, String password);
 	}
-	
+
 	private LoginFragmentContainer fragmentContainer;
 	
 	@Override
@@ -27,7 +27,7 @@ public class LoginFragment extends Fragment{
 		super.onAttach(activity);
 		fragmentContainer = (LoginFragmentContainer) activity;
 	}
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_login, container);
@@ -39,7 +39,7 @@ public class LoginFragment extends Fragment{
 				if (fragmentContainer != null){
 					fragmentContainer.performLogin(login.getText().toString(), password.getText().toString());
 				}
-				
+
 			}
 		});
 		return view;

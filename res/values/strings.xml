@@ -2,9 +2,17 @@
 <resources>
     <string name="app_name">dzig</string>
     <string name="last_seen_message">last seen %1$s</string>
+
+
     <string name="login_login_label">Login</string>
     <string name="login_password_label">Password</string>
     <string name="login_remember_me_label">Remember me</string>
     <string name="login_sign_in_button">Sign in</string>
     <string name="login_register">Register</string>
+    <string name="login_incognito_button">Incognito</string>
+
+    <string name="btn_ok">Ok</string>
+    <string name="btn_cancel">Cancel</string>
+
+    <string name="dialog_account_title">Select account</string>
 </resources>
