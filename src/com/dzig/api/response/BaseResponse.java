@@ -2,6 +2,10 @@ package com.dzig.api.response;
 
 import java.util.Date;
 
+/**
+ * Base response entity
+ * Status code 600 reserved for NO INTERNET CONNECTION ERROR
+ */
 public class BaseResponse {
 
     protected int status;
