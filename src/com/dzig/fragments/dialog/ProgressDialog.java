@@ -23,6 +23,10 @@ public class ProgressDialog extends DialogFragment {
         return fragment;
     }
 
+    public static ProgressDialog newInstance() {
+        return newInstance("");
+    }
+
     @Override
     public Dialog onCreateDialog(Bundle bundle) {
         String message = getArguments().getString(BUNDLE_MESSAGE, getString(R.string.dialog_progress_message));
