@@ -1,7 +1,7 @@
 package com.dzig.api.request;
 
 
-import android.util.JsonReader;
+import android.net.Uri;
 import com.dzig.api.ApiClient;
 import com.dzig.api.ParseHelpers;
 import com.dzig.api.response.BaseResponse;
@@ -16,7 +16,6 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -41,7 +40,7 @@ public abstract class BaseRequest<T extends  BaseResponse> {
                 for (NameValuePair pair : this){
                     sb.append(pair.getName())
                             .append("=")
-                            .append(pair.getValue())
+                            .append(Uri.encode(pair.getValue(), "UTF-8"))
                             .append("&");
                 }
             }
@@ -100,7 +99,7 @@ public abstract class BaseRequest<T extends  BaseResponse> {
     }
 
     public T parseResponse(HttpResponse response) throws IOException{
-        final int statusCode = response.getStatusLine().getStatusCode();
+        int statusCode = response.getStatusLine().getStatusCode();
         HttpEntity entity = response.getEntity();
         InputStreamReader reader = null;
         if (entity != null) {
@@ -113,12 +112,23 @@ public abstract class BaseRequest<T extends  BaseResponse> {
                     sb.append(buf, 0, l);
                 }
                 Logger.debug(ApiClient.TAG, "Response received: " + sb);
-                JSONObject obj = new JSONObject(sb.toString());
 
-                if (statusCode < 400) {
-                    return parseResponse(obj);
+                if (statusCode == 200) {
+                    JSONObject obj = new JSONObject(sb.toString());
+                    JSONObject meta = obj.getJSONObject("meta");
+                    statusCode = meta.getInt("status");
+                    String asOf = meta.getString("asOf");
+                    T resp;
+                    if (statusCode < 400){
+                        resp =  parseResponse(obj);
+                    } else {
+                        resp =  parseErrorResponse(meta);
+                    }
+                    resp.setMeta(statusCode, asOf);
+                    return resp;
                 } else {
-                    return parseErrorResponse(obj);
+                    //something went wrong, grabbing the whole message
+                    return createErrorResponse(statusCode, sb.toString());
                 }
             } catch (JSONException jex){
                 Logger.error(TAG, "Unable to parse json", jex);
@@ -129,14 +139,16 @@ public abstract class BaseRequest<T extends  BaseResponse> {
             }
         }
 
-        return createErrorResponse("Unable to parse the output");
+        return createErrorResponse(statusCode, "Unable to read the output");
     }
 
-    private T parseErrorResponse(JSONObject obj) {
-        return createErrorResponse(ParseHelpers.parseErrorMessage(obj));
+    private T parseErrorResponse(JSONObject meta) {
+        return createErrorResponse(ParseHelpers.parseErrorMessage(meta));
     }
 
-    public abstract T parseResponse(JSONObject response) throws JSONException;
+    protected abstract T parseResponse(JSONObject response) throws JSONException;
 
     public abstract T createErrorResponse(String message);
+
+    public abstract T createErrorResponse(int statusCode, String message);
 }

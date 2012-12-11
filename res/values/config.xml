@@ -1,6 +1,7 @@
 <resources>
-    <string name="base_url">http://dzig-server.ktarasenko.cloudbees.net/api/</string>
+    <string name="base_url">http://dzig-gae.appspot.com/api/v%s/</string>
     <string name="client_version">1</string>
+    <string name="api_version">1</string>
 
     <string name="map_key">0PXTMoSF0ubWICxoariLBPPrv2xwPuYyfrejfLg</string>
 </resources>

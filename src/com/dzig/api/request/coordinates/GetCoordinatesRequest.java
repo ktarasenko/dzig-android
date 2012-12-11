@@ -5,7 +5,6 @@ import com.dzig.api.ParseHelpers;
 import com.dzig.api.request.BaseRequest;
 import com.dzig.api.response.coordinates.GetCoordinatesResponse;
 import com.dzig.model.Coordinate;
-import org.apache.http.HttpResponse;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -28,7 +27,7 @@ public class GetCoordinatesRequest extends BaseRequest<GetCoordinatesResponse>{
      * @param creatorId  filtered by creatorId
      */
     public static GetCoordinatesRequest newInstance(String creatorId){
-        return (GetCoordinatesRequest)new GetCoordinatesRequest().addParam("creator", creatorId);
+        return (GetCoordinatesRequest)new GetCoordinatesRequest().addParam("creatorId", creatorId);
     }
 
     @Override
@@ -39,6 +38,11 @@ public class GetCoordinatesRequest extends BaseRequest<GetCoordinatesResponse>{
     @Override
     public GetCoordinatesResponse createErrorResponse(String message) {
         return new GetCoordinatesResponse(message);
+    }
+
+    @Override
+    public GetCoordinatesResponse createErrorResponse(int statusCode, String message) {
+        return new GetCoordinatesResponse(statusCode, message);
     }
 }
 

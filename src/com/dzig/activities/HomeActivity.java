@@ -1,11 +1,13 @@
 package com.dzig.activities;
 
+import android.widget.Toast;
 import com.dzig.R;
 import com.dzig.location.LocationService;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import com.dzig.model.User;
 
 public class HomeActivity extends FragmentActivity {
 
@@ -17,6 +19,7 @@ public class HomeActivity extends FragmentActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
+        Toast.makeText(this, "Welcome back " + User.currentUser(), Toast.LENGTH_SHORT).show();
 		startService(new Intent(this, LocationService.class));
 	}
 	

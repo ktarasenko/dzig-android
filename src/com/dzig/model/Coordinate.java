@@ -14,10 +14,10 @@ public class Coordinate implements Parcelable{
     private  final Date date;
     private  final double lat;
     private  final double lon;
-    private  final int accuracy;
+    private  final double accuracy;
 
 
-    public Coordinate(String id, String creator, Date date, double lat, double lon, int accuracy) {
+    public Coordinate(String id, String creator, Date date, double lat, double lon, double accuracy) {
         this.id = id;
         this.creator = creator;
         this.date = date;
@@ -46,7 +46,7 @@ public class Coordinate implements Parcelable{
         return lon;
     }
 
-    public int getAccuracy() {
+    public double getAccuracy() {
         return accuracy;
     }
 
@@ -62,7 +62,7 @@ public class Coordinate implements Parcelable{
         out.writeLong(date.getTime());
         out.writeDouble(lat);
         out.writeDouble(lon);
-        out.writeInt(accuracy);
+        out.writeDouble(accuracy);
     }
 
     public static final ComplexCreator<Coordinate> CREATOR
@@ -75,7 +75,7 @@ public class Coordinate implements Parcelable{
                     new Date(in.readLong()),
                     in.readDouble(),
                     in.readDouble(),
-                    in.readInt());
+                    in.readDouble());
 
         }
 
@@ -83,11 +83,11 @@ public class Coordinate implements Parcelable{
 		public Coordinate createFromJSON(JSONObject in) {
             return new Coordinate(
                     in.optString("id"),
-                    in.optString("creator"),
+                    in.optString("creatorId"),
                     ParseHelpers.parseDate(in.optString("date")),
                     in.optDouble("lat"),
                     in.optDouble("lon"),
-                    in.optInt("accuracy"));
+                    in.optDouble("accuracy"));
         }
 
 
