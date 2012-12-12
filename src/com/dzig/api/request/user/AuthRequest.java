@@ -7,6 +7,10 @@ import com.dzig.model.User;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+@Deprecated
+/**
+ * Totally corrupted
+ */
 public class AuthRequest extends BaseRequest<UserResponse>{
 
 
