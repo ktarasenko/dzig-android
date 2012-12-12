@@ -40,7 +40,7 @@ public final class AuthenticatedAppEngineContext implements HttpContext {
             HttpResponse response = httpClient.execute(http_get, this);
             checkResponse(cookieStore_, response);
         } catch (IOException e) {
-            Logger.error("ApiClient", "Unable to authenticate", e);
+            Logger.error(ApiClient.TAG, "Unable to authenticate", e);
         } finally {
             httpClient.close();
         }
@@ -49,11 +49,11 @@ public final class AuthenticatedAppEngineContext implements HttpContext {
 
     private void checkResponse(CookieStore cookieStore, HttpResponse response) {
         if (response.getStatusLine().getStatusCode() != 302) {
-            Logger.error("ApiClient",
+            Logger.error(ApiClient.TAG,
                     "authentication response was not a redirect");
         }
         if (!isAuthenticationCookiePresent(cookieStore)) {
-            Logger.error("ApiClient",
+            Logger.error(ApiClient.TAG,
                     "authentication cookie not found in cookie store");
         }
     }

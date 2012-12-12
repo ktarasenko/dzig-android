@@ -10,7 +10,6 @@ import com.dzig.api.request.user.GetUserRequest;
 import com.dzig.app.DzigApplication;
 import com.dzig.R;
 import com.dzig.api.request.BaseRequest;
-import com.dzig.api.request.user.AuthRequest;
 import com.dzig.api.response.BaseResponse;
 import com.dzig.api.response.user.UserResponse;
 import com.dzig.utils.Logger;
@@ -79,7 +78,7 @@ public class ApiClient {
         try {
              T response = executeRequest(request);
             //check for unauthorized request
-            if (response.getStatus() == 403 && !(request instanceof AuthRequest)){
+            if (response.getStatus() == 403){
                 Account lastUser = DzigApplication.userManager().getLastUsedAccount();
                 if (lastUser != null){
                     authenticate(DzigApplication.userManager().updateToken(null, lastUser, true));

@@ -24,7 +24,8 @@ public class LoginFragmentSimple extends Fragment {
             View.OnClickListener activity = (View.OnClickListener) getActivity();
 
             view.findViewById(R.id.login_button).setOnClickListener(activity);
-            view.findViewById(R.id.login_incognito).setOnClickListener(activity);
+
+//            view.findViewById(R.id.login_incognito).setOnClickListener(activity);
         }  catch (ClassCastException e) {
             // The activity doesn't implement the interface, throw exception
             throw new ClassCastException(getActivity().toString()
