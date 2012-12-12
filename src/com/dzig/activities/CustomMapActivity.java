@@ -50,7 +50,7 @@ public class CustomMapActivity extends MapActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.map_view);
 		
-		mapView = (MapView) findViewById(R.id.mapview);
+		mapView = (MapView) findViewById(R.id.mapview);		
 		mapOverlay = new MapOverlay(getResources().getDrawable(R.drawable.map_marker));
 		mapOverlay2 = new MapOverlay2(this, mapView);
 		mapView.getOverlays().add(mapOverlay2);
@@ -115,13 +115,14 @@ public class CustomMapActivity extends MapActivity {
 		}
 		
 	};
+	
 
 	class MapOverlay extends ItemizedOverlay<OverlayItem>{
 
 		private final ArrayList<OverlayItem> items = new ArrayList<OverlayItem>();
 
 		public MapOverlay(Drawable defaultMarker) {
-			super(boundCenterBottom(defaultMarker));
+			super(boundCenter(defaultMarker));
 		}
 		
 		public void addOverlay(OverlayItem overlay) {
@@ -152,8 +153,6 @@ public class CustomMapActivity extends MapActivity {
 		
 		@Override
 		public void draw(Canvas canvas, MapView map, boolean shadow) {
-			super.draw(canvas, map, shadow);
-			
 			for (OverlayItem item : items) {
 				drawPoint(canvas, map, item, shadow);
 			}
