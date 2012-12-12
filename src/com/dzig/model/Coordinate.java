@@ -10,14 +10,14 @@ import java.util.Date;
 public class Coordinate implements Parcelable{
 
     private  final String id;
-    private  final String creator;
+    private  final User creator;
     private  final Date date;
     private  final double lat;
     private  final double lon;
     private  final double accuracy;
 
 
-    public Coordinate(String id, String creator, Date date, double lat, double lon, double accuracy) {
+    public Coordinate(String id, User creator, Date date, double lat, double lon, double accuracy) {
         this.id = id;
         this.creator = creator;
         this.date = date;
@@ -30,7 +30,7 @@ public class Coordinate implements Parcelable{
         return id;
     }
 
-    public String getCreator() {
+    public User getCreator() {
         return creator;
     }
 
@@ -58,7 +58,7 @@ public class Coordinate implements Parcelable{
     @Override
     public void writeToParcel(Parcel out, int flags) {
          out.writeString(id);
-        out.writeString(creator);
+        out.writeParcelable(creator, 0);
         out.writeLong(date.getTime());
         out.writeDouble(lat);
         out.writeDouble(lon);
@@ -71,7 +71,7 @@ public class Coordinate implements Parcelable{
 		public Coordinate createFromParcel(Parcel in) {
             return new Coordinate(
                     in.readString(),
-                    in.readString(),
+                    (User)in.readParcelable(getClass().getClassLoader()),
                     new Date(in.readLong()),
                     in.readDouble(),
                     in.readDouble(),
@@ -83,7 +83,7 @@ public class Coordinate implements Parcelable{
 		public Coordinate createFromJSON(JSONObject in) {
             return new Coordinate(
                     in.optString("id"),
-                    in.optString("creatorId"),
+                    User.CREATOR.createFromJSON(in.optJSONObject("creator")),
                     ParseHelpers.parseDate(in.optString("date")),
                     in.optDouble("lat"),
                     in.optDouble("lon"),

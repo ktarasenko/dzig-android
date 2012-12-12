@@ -33,6 +33,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.support.v4.app.NotificationCompat;
+import com.dzig.model.User;
 
 
 public class LocationService extends Service {
@@ -266,7 +267,8 @@ public class LocationService extends Service {
 		for (int i = 0; i < debugNickNames.length; i++) {
 			double lat = 50.422519 + random.nextDouble()/10;
 			double lon = 30.50344 + random.nextDouble()/10;
-			coordinates.add(new Coordinate(""+debugNickNames[i].hashCode(), debugNickNames[i], new Date(), lat, lon, 5));
+            User u = new User(debugNickNames[i], debugNickNames[i],  debugNickNames[i], "444");
+			coordinates.add(new Coordinate(""+debugNickNames[i].hashCode(), u, new Date(), lat, lon, 5));
 		}
 	}
 	
