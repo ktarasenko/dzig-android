@@ -57,6 +57,8 @@ public class LoginDialogFragment extends DialogFragment implements View.OnClickL
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        if (getArguments().containsKey(BUNDLE_LIST)) return super.onCreateView(inflater, container, savedInstanceState);
+
         View v = inflater.inflate(R.layout.fragment_login_simple, container, false);
         button = v.findViewById(R.id.login_button);
         button.setOnClickListener(this);
@@ -141,14 +143,7 @@ public class LoginDialogFragment extends DialogFragment implements View.OnClickL
         if (size == 0){
             doWebLogin();
         } else if (size > 0){
-//            FragmentTransaction ft = getFragmentManager().beginTransaction();
-//            Fragment prev = getFragmentManager().findFragmentByTag(LoginDialogFragment.TAG);
-//            if (prev != null) {
-//                ft.remove(prev);
-//            }
-//            ft.addToBackStack(null);
-
-            LoginDialogFragment.newInstance(accounts).show(getFragmentManager(), LoginDialogFragment.TAG);
+             LoginDialogFragment.newInstance(accounts).show(getFragmentManager(), LoginDialogFragment.TAG);
         } else {
             doAuthentication(accounts[0]);
         }
