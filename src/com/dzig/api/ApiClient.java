@@ -111,11 +111,17 @@ public class ApiClient {
         HttpUriRequest httpUriRequest = createHttpRequest(request);
         if (DzigApplication.getInstance().isConnected()){
             if (lock.tryAcquire(WAITING_TIMEOUT, TimeUnit.SECONDS)){
-                Logger.debug(TAG, "lock aquired: ");
-                HttpResponse response = client.execute(httpUriRequest, httpContext);
-                lock.release();
-                Logger.debug(TAG, "lock released: ");
-                return  request.parseResponse(response);
+                HttpResponse response = null;
+                try {
+                    Logger.debug(TAG, "lock aquired: ");
+                    response = client.execute(httpUriRequest, httpContext);
+                } finally {
+                    lock.release();
+                    Logger.debug(TAG, "lock released: ");
+                }
+                if (response !=null){
+                    return  request.parseResponse(response);
+                }
             } else {
                 Logger.error(TAG, "lock not aquired:  timeout");
             }
