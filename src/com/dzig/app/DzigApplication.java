@@ -1,14 +1,13 @@
-package com.dzig;
+package com.dzig.app;
 
 
 import android.app.Application;
-import android.os.Build;
-import android.os.StrictMode;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import com.dzig.api.ApiClient;
-import com.dzig.api.request.coordinates.GetCoordinatesRequest;
-import com.dzig.api.response.coordinates.GetCoordinatesResponse;
-import com.dzig.api.task.BasicTask;
 import com.dzig.utils.Logger;
+import com.dzig.utils.UserPreferences;
 
 public class DzigApplication extends Application{
 
@@ -16,6 +15,9 @@ public class DzigApplication extends Application{
     private static final String TAG = "DzigApplication";
 
     private ApiClient client;
+    private ConnectivityManager connectivityManager;
+    private UserPreferences userPreferences;
+    private UserManager userManager;
 
     public DzigApplication(){
         Logger.debug(TAG, "DzigApplication init");
@@ -41,14 +43,34 @@ public class DzigApplication extends Application{
 //                    .build());
 //        }
         super.onCreate();
+        Context context = getApplicationContext();
         Logger.debug(TAG, "DzigApplication onCreate");
-        client = new ApiClient(getApplicationContext());
+        client = new ApiClient(context);
+        connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        userPreferences = UserPreferences.newInstance(context);
+        userManager = new UserManager(context);
 
     }
 
-    public ApiClient getClient(){
-         return client;
+    public static ApiClient client(){
+         return getInstance().client;
+    }
+
+    public static boolean isConnected(){
+        NetworkInfo nInfo = getInstance().connectivityManager.getActiveNetworkInfo();
+        if (nInfo != null){
+            return nInfo.isConnectedOrConnecting();
+        }
+
+        return false;
     }
 
 
+    public static UserPreferences userPreferences() {
+        return getInstance().userPreferences;
+    }
+
+    public static UserManager userManager() {
+        return getInstance().userManager;
+    }
 }

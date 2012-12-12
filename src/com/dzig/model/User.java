@@ -3,6 +3,7 @@ package com.dzig.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import com.dzig.app.DzigApplication;
 import org.json.JSONObject;
 
 public class User implements Parcelable {
@@ -42,6 +43,10 @@ public class User implements Parcelable {
         out.writeString(nickName);
     }
 
+    public static User currentUser(){
+        return DzigApplication.userManager().getCurrentUser();
+    }
+
     public static final ComplexCreator<User> CREATOR
             = new ComplexCreator<User>() {
         @Override
@@ -67,5 +72,10 @@ public class User implements Parcelable {
             return new User[size];
         }
     };
+
+    @Override
+    public String toString() {
+        return nickName;
+    }
 }
 

@@ -7,6 +7,9 @@ import android.preference.PreferenceManager;
 import java.util.UUID;
 
 public class UserPreferences {
+
+    public static final String PREF_LAST_USER = "lastUser";
+
 	private final SharedPreferences preferences;
 	
 	private UserPreferences (Context context){
@@ -29,6 +32,11 @@ public class UserPreferences {
 	}
 
     public String getString(String key) {
-        return preferences.getString(key, "notfound");
+        return preferences.getString(key, null);
+    }
+
+    public void putString(String key, String value){
+        preferences.edit().putString(key, value).commit();
     }
 }
+

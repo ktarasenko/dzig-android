@@ -2,12 +2,15 @@ package com.dzig.api.response;
 
 import java.util.Date;
 
+/**
+ * Base response entity
+ * Status code 600 reserved for NO INTERNET CONNECTION ERROR
+ */
 public class BaseResponse {
 
     protected int status;
     protected String asOf;
     protected String errorMessage;
-
 
 
     public BaseResponse(String errorMessage) {
@@ -34,6 +37,10 @@ public class BaseResponse {
 
     public boolean isOk() {
         return status < 300;
+    }
+
+    public boolean isConnected() {
+        return status != 600;
     }
 
     public String getAsOf() {

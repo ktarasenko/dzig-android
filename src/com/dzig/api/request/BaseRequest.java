@@ -1,6 +1,7 @@
 package com.dzig.api.request;
 
 
+import android.net.Uri;
 import com.dzig.api.ApiClient;
 import com.dzig.api.ParseHelpers;
 import com.dzig.api.response.BaseResponse;
@@ -39,7 +40,7 @@ public abstract class BaseRequest<T extends  BaseResponse> {
                 for (NameValuePair pair : this){
                     sb.append(pair.getName())
                             .append("=")
-                            .append(pair.getValue())
+                            .append(Uri.encode(pair.getValue(), "UTF-8"))
                             .append("&");
                 }
             }

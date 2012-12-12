@@ -1,11 +1,13 @@
 package com.dzig.api;
 
 
+import android.accounts.Account;
 import android.content.Context;
 import android.net.http.AndroidHttpClient;
 import android.util.Log;
 import com.dzig.BuildConfig;
-import com.dzig.DzigApplication;
+import com.dzig.api.request.user.GetUserRequest;
+import com.dzig.app.DzigApplication;
 import com.dzig.R;
 import com.dzig.api.request.BaseRequest;
 import com.dzig.api.request.user.AuthRequest;
@@ -33,7 +35,6 @@ public class ApiClient {
     private final String clientVersion;
     private final AndroidHttpClient client;
     private final Semaphore lock;
-    private String token;
     private static final int WAITING_TIMEOUT = 300;
 
 
@@ -51,13 +52,9 @@ public class ApiClient {
         }
         baseUrl = context.getString(R.string.base_url, context.getString(R.string.api_version));
         clientVersion = context.getString(R.string.client_version);
-        token = UserPreferences.newInstance(context).getString("token");
     }
 
 
-    public void updateToken(String token){
-        this.token = token;
-    }
 
     private HttpUriRequest createHttpRequest(BaseRequest<?> request) throws IOException {
         HttpUriRequest httpUriRequest = null;
@@ -76,11 +73,20 @@ public class ApiClient {
         try {
              T response = executeRequest(request);
             //check for unauthorized request
-            if (response.getStatus() == 403){
-                UserResponse authResponse = executeRequest(AuthRequest.newInstanceTokenLogin(token));
-                if (authResponse.isOk()){
-                    //TODO: update current user
-                   response =  executeRequest(request);
+            if (response.getStatus() == 403 && !(request instanceof AuthRequest)){
+                Account lastUser = DzigApplication.userManager().getLastUsedAccount();
+                if (lastUser != null){
+                    UserResponse authResponse = executeRequest(
+                            AuthRequest.newInstanceTokenLogin(
+                                    DzigApplication.userManager().updateToken(null, lastUser, true)));
+                    if (authResponse.isOk()){
+                        DzigApplication.userManager().updateCurrentUser(authResponse.getUser());
+                        if (request instanceof GetUserRequest) {
+                            response = (T)authResponse;
+                        } else {
+                            response =  executeRequest(request);
+                        }
+                    }
                 }
             }
 
@@ -97,15 +103,18 @@ public class ApiClient {
     private <T extends BaseResponse> T executeRequest(BaseRequest<T> request)
                             throws InterruptedException, IOException {
         HttpUriRequest httpUriRequest = createHttpRequest(request);
-
-        if (lock.tryAcquire(WAITING_TIMEOUT, TimeUnit.SECONDS)){
-            Logger.debug(TAG, "lock aquired: ");
-            HttpResponse response = client.execute(httpUriRequest);
-            lock.release();
-            Logger.debug(TAG, "lock released: ");
-            return  request.parseResponse(response);
+        if (DzigApplication.getInstance().isConnected()){
+            if (lock.tryAcquire(WAITING_TIMEOUT, TimeUnit.SECONDS)){
+                Logger.debug(TAG, "lock aquired: ");
+                HttpResponse response = client.execute(httpUriRequest);
+                lock.release();
+                Logger.debug(TAG, "lock released: ");
+                return  request.parseResponse(response);
+            } else {
+                Logger.error(TAG, "lock not aquired:  timeout");
+            }
         } else {
-            Logger.error(TAG, "lock not aquired:  timeout");
+            return request.createErrorResponse(600, "No Internet Connection");
         }
 
         return request.createErrorResponse("unable to execute request");

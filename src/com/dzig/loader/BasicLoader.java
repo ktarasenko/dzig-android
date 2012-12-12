@@ -3,9 +3,8 @@ package com.dzig.loader;
 
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
-import com.dzig.DzigApplication;
+import com.dzig.app.DzigApplication;
 import com.dzig.api.request.BaseRequest;
-import com.dzig.api.response.BaseResponse;
 import com.dzig.api.response.GetDataResponse;
 
 public class BasicLoader<Data, Request extends BaseRequest<Response>,
@@ -20,6 +19,6 @@ public class BasicLoader<Data, Request extends BaseRequest<Response>,
 
     @Override
     public Data loadInBackground() {
-        return DzigApplication.getInstance().getClient().execute(request).getData();
+        return DzigApplication.client().execute(request).getData();
     }
 }

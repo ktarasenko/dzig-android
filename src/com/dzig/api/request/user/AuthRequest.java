@@ -11,7 +11,7 @@ public class AuthRequest extends BaseRequest<UserResponse>{
 
 
     protected AuthRequest() {
-        super(Method.POST, "auth");
+        super(Method.GET, "auth");
     }
 
 
