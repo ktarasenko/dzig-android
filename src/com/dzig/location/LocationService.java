@@ -92,6 +92,7 @@ public class LocationService extends Service {
 	
 	//============================ DEBUG =================================
 	private static final String[] debugNickNames = {"Jade", "Sub Zero", "Raiden", "Goro", "Lui Kang", "Cyrax", "Shang Tsung", "Kabal"};
+	private static final String[] debugUserPics = {"A03", "B02", "C01", "E05", "F04", "G02", "H01", "I03"};
 	private void debugGenerateCoordinates(){
 		Random random = new Random();
 		for (int i = 0; i < debugNickNames.length; i++) {
