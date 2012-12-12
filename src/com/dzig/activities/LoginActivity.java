@@ -11,6 +11,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.Toast;
+import com.dzig.api.request.user.GetUserRequest;
 import com.dzig.app.DzigApplication;
 import com.dzig.R;
 import com.dzig.api.request.user.AuthRequest;
@@ -38,7 +39,8 @@ public class LoginActivity extends FragmentActivity  implements View.OnClickList
             @Override
             protected UserResponse doInBackground(Account... account) {
                 String authToken =  DzigApplication.userManager().updateToken(LoginActivity.this,account[0], true);
-                return DzigApplication.client().execute(AuthRequest.newInstanceTokenLogin(authToken));
+                DzigApplication.client().authenticate(LoginActivity.this, authToken);
+                return DzigApplication.client().execute(GetUserRequest.newInstance());
             }
 
             @Override
@@ -46,6 +48,7 @@ public class LoginActivity extends FragmentActivity  implements View.OnClickList
                 Logger.debug(TAG, userResponse.getStatus() + " " + userResponse.getUser());
                 if (userResponse.isOk()){
                     Toast.makeText(LoginActivity.this, "Authenticated as " + userResponse.getUser().getNickName(), Toast.LENGTH_SHORT).show();
+                    onLoginSuccessful();
                 } else {
                     Toast.makeText(LoginActivity.this, "Not authenticated " , Toast.LENGTH_SHORT).show();
                 }
@@ -94,10 +97,14 @@ public class LoginActivity extends FragmentActivity  implements View.OnClickList
                 doLogin();
                 break;
             case R.id.login_incognito:
-                startActivity(new Intent(this, HomeActivity.class));
-                finish();
+                onLoginSuccessful();
                 break;
         }
+    }
+
+    private void onLoginSuccessful() {
+        startActivity(new Intent(this, HomeActivity.class));
+        finish();
     }
 
 }
