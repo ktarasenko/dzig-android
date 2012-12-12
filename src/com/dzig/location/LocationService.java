@@ -7,10 +7,17 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import com.dzig.R;
 import com.dzig.activities.CustomMapActivity;
+import com.dzig.activities.HomeActivity;
 import com.dzig.model.Coordinate;
 
+
 import android.app.AlarmManager;
+
+import android.app.Notification;
+import android.app.NotificationManager;
+
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -25,6 +32,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.support.v4.app.NotificationCompat;
+
 
 public class LocationService extends Service {
 
@@ -185,6 +194,7 @@ public class LocationService extends Service {
 	}
 
 	private ScheduledExecutorService scheduler;
+	private static final int notificationId = 1;
 	
 	public IBinder onBind(Intent arg0) {		
 		return null;
@@ -198,10 +208,23 @@ public class LocationService extends Service {
 			scheduler = Executors.newScheduledThreadPool(1);
 			scheduler.scheduleAtFixedRate(updatePointsRunable, 0, 1, TimeUnit.SECONDS);
 		}
+		
+		Intent onClickIntent = new Intent(this, HomeActivity.class);
+		onClickIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, onClickIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+		
+		Notification notification = new NotificationCompat.Builder(this).setSmallIcon(R.drawable.ic_launcher)
+				.setContentTitle("Dzig!").setContentText("Dzig service is running").build();
+		NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+		manager.notify(notificationId, notification);
+		
 		return START_STICKY;
 	}
 	
 	public void onDestroy() {
+		NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+		manager.cancel(notificationId);
+		
 		unregisterReceiver(broadcastReceiver);
 		disableLocationUpdates();
 		scheduler.shutdown();
