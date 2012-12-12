@@ -99,7 +99,7 @@ public class LocationService extends Service {
 		for (int i = 0; i < debugNickNames.length; i++) {
 			double lat = 50.422519 + random.nextDouble()/10;
 			double lon = 30.50344 + random.nextDouble()/10;
-            User u = new User(debugNickNames[i], debugNickNames[i],  debugNickNames[i], "444");
+            User u = new User(""+debugNickNames[i].hashCode(), debugNickNames[i]+"@gmail.com",  debugNickNames[i], debugUserPics[i]);
 			coordinates.add(new Coordinate(""+debugNickNames[i].hashCode(), u, new Date(), lat, lon, 5));
 		}
 	}

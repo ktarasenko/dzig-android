@@ -48,8 +48,7 @@ public class CustomMapActivity extends MapActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.map_view);
-		
+		setContentView(R.layout.map_view);		
 		mapView = (MapView) findViewById(R.id.mapview);		
 		mapOverlay = new MapOverlay(getResources().getDrawable(R.drawable.map_marker));
 		mapOverlay2 = new MapOverlay2(this, mapView);
