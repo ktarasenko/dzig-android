@@ -39,7 +39,7 @@ public class LoginActivity extends FragmentActivity  implements View.OnClickList
             @Override
             protected UserResponse doInBackground(Account... account) {
                 String authToken =  DzigApplication.userManager().updateToken(LoginActivity.this,account[0], true);
-                DzigApplication.client().authenticate(LoginActivity.this, authToken);
+                DzigApplication.client().authenticate(authToken);
                 return DzigApplication.client().execute(GetUserRequest.newInstance());
             }
 

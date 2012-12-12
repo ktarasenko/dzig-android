@@ -71,8 +71,8 @@ public class ApiClient {
         return httpUriRequest;
     }
 
-    public void authenticate(Context context, String authToken){
-         httpContext = AuthenticatedAppEngineContext.newInstance(context, baseUrlRoot, authToken);
+    public void authenticate(String authToken){
+         httpContext = AuthenticatedAppEngineContext.newInstance(baseUrlRoot, authToken);
     }
 
     public <T extends BaseResponse> T execute(BaseRequest<T> request) {
@@ -82,9 +82,8 @@ public class ApiClient {
             if (response.getStatus() == 403 && !(request instanceof AuthRequest)){
                 Account lastUser = DzigApplication.userManager().getLastUsedAccount();
                 if (lastUser != null){
-                    UserResponse authResponse = executeRequest(
-                            AuthRequest.newInstanceTokenLogin(
-                                    DzigApplication.userManager().updateToken(null, lastUser, true)));
+                    authenticate(DzigApplication.userManager().updateToken(null, lastUser, true));
+                    UserResponse authResponse = executeRequest(GetUserRequest.newInstance());
                     if (authResponse.isOk()){
                         DzigApplication.userManager().updateCurrentUser(authResponse.getUser());
                         if (request instanceof GetUserRequest) {

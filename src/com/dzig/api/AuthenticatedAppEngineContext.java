@@ -22,16 +22,14 @@ public final class AuthenticatedAppEngineContext implements HttpContext {
     private HttpContext delegate_;
     private CookieStore cookieStore_;
 
-    public static HttpContext newInstance(Context context, String uri, String token) {
-        if (context == null)
-            throw new IllegalArgumentException("context is null");
-        return new AuthenticatedAppEngineContext(context, uri, token);
+    public static HttpContext newInstance(String uri, String token) {
+        return new AuthenticatedAppEngineContext(uri, token);
     }
 
-    private AuthenticatedAppEngineContext(Context context, String uri, String authToken){
+    private AuthenticatedAppEngineContext(String uri, String authToken){
         delegate_ = new BasicHttpContext();
         AndroidHttpClient httpClient = AndroidHttpClient.newInstance(
-                "GetAuthCookieClient", context);
+                "GetAuthCookieClient");
         try {
             httpClient.getParams().setBooleanParameter(
                     ClientPNames.HANDLE_REDIRECTS, false);

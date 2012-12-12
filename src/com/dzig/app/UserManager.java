@@ -16,12 +16,10 @@ public class UserManager {
 
     private final AccountManager accountManager;
     private User currentUser;
-    private String lastAccountName;
 
 
     public UserManager(Context context) {
         this.accountManager = AccountManager.get(context);
-        this.lastAccountName = DzigApplication.userPreferences().getString(UserPreferences.PREF_LAST_USER);
     }
 
 
@@ -38,6 +36,7 @@ public class UserManager {
      * @return account that user logged in last time, null otherwise
      */
     public Account getLastUsedAccount(){
+        String lastAccountName = DzigApplication.userPreferences().getString(UserPreferences.PREF_LAST_USER);
         if (lastAccountName != null){
             for (Account acc : getAccounts()){
                 if (lastAccountName.equalsIgnoreCase(acc.name)){
@@ -81,7 +80,6 @@ public class UserManager {
 
     public synchronized void updateCurrentUser(User user) {
        currentUser = user;
-       lastAccountName = user.getEmail();
-       DzigApplication.userPreferences().putString(UserPreferences.PREF_LAST_USER, lastAccountName);
+       DzigApplication.userPreferences().putString(UserPreferences.PREF_LAST_USER, user.getEmail());
     }
 }
