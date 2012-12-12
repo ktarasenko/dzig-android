@@ -60,7 +60,7 @@
         </activity>
         
         
-        <service android:name=".location.LocationService" /><receiver android:name=".location.LocationChangedReceiver"/>
+      <!--  <service android:name=".location.LocationService" /><receiver android:name=".location.LocationChangedReceiver"/>    -->
 
         
         <meta-data

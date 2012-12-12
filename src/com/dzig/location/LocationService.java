@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 import com.dzig.R;
 import com.dzig.activities.CustomMapActivity;
 import com.dzig.activities.HomeActivity;
+import com.dzig.app.DzigApplication;
 import com.dzig.model.Coordinate;
 
 
@@ -34,6 +35,7 @@ import android.os.IBinder;
 import android.util.Log;
 import android.support.v4.app.NotificationCompat;
 import com.dzig.model.User;
+import com.dzig.utils.Logger;
 
 
 public class LocationService extends Service {
@@ -116,7 +118,7 @@ public class LocationService extends Service {
 		public void onLocationChanged(Location l) {			
 			Log.d(TAG,"onLocationChanged");
 			setCurrentLocation(new Coordinate(""+ new String("Me").hashCode(), 
-					"Me", 
+					new User("Me","Me","Me","Me"),
 					new Date(l.getTime()), 
 					l.getLatitude(), 
 					l.getLongitude(), 
@@ -135,12 +137,17 @@ public class LocationService extends Service {
 			protected Void doInBackground(Void... params) {
 				// Find the last known location, specifying a required accuracy of within the min distance between updates
 				// and a required latency of the minimum time required between updates.
-				Location lastKnownLocation = lastLocationFinder.getLastBestLocation(LocationService.MAX_DISTANCE, 
+
+				Location lastKnownLocation = null;
+                try{
+                        lastLocationFinder.getLastBestLocation(LocationService.MAX_DISTANCE,
 						System.currentTimeMillis()-LocationService.MAX_TIME);
-				
+            } catch (IllegalArgumentException iex){
+                Logger.error("Location", "Unable to find provider. Need to handle this more intelligent", iex);
+            }
 				if (lastKnownLocation != null){				
-					setCurrentLocation(new Coordinate(""+ new String("Me").hashCode(), 
-							"Me", 
+					setCurrentLocation(new Coordinate(""+ new String("Me").hashCode(),
+                            new User("Me","Me","Me","Me"),
 							new Date(lastKnownLocation.getTime()), 
 							lastKnownLocation.getLatitude(), 
 							lastKnownLocation.getLongitude(), 
@@ -170,6 +177,7 @@ public class LocationService extends Service {
 	
 	protected void requestLocationUpdates() {
 	    // Normal updates while activity is visible.
+        try {
 	    locationUpdateRequester.requestLocationUpdates(LocationService.MAX_TIME, LocationService.MAX_DISTANCE, criteria, locationListenerPendingIntent);
 	    
 	    // Register a receiver that listens for when the provider I'm using has been disabled. 
@@ -182,6 +190,9 @@ public class LocationService extends Service {
 	    if (bestProvider != null && !bestProvider.equals(bestAvailableProvider)) {
 	      locationManager.requestLocationUpdates(bestProvider, 0, 0, bestInactiveLocationProviderListener, getMainLooper());
 	    }
+        } catch (IllegalArgumentException iex){
+            Logger.error("Location", "Unable to find provider. Need to handle this more intelligent", iex);
+        }
 	  }
 	  
 	  /**
