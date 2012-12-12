@@ -86,7 +86,7 @@ public class CustomMapActivity extends MapActivity {
 			GeoPoint point = new GeoPoint(toIntE6(coordinate.getLat()), toIntE6(coordinate.getLon()));
 			
 			String msg = dateFormat.format(coordinate.getDate()); //getResources().getString(R.string.last_seen_message, dateFormat.format(coordinate.getDate()));
-			OverlayItem overlayitem = new OverlayItem(point, coordinate.getCreator(), msg);
+			OverlayItem overlayitem = new OverlayItem(point, coordinate.getCreator().toString(), msg);
 			items.add(overlayitem);	
 		}
 		mapOverlay.setOverlays(items);

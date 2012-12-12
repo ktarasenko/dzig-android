@@ -88,7 +88,7 @@ public class MapLegendFragment extends Fragment{
 			TextView username = (TextView)  convertView.findViewById(R.id.username);
 			TextView lastseen = (TextView)  convertView.findViewById(R.id.lastseen);
 			Coordinate coordinate = getItem(position);
-			username.setText(coordinate.getCreator());
+			username.setText(coordinate.getCreator().toString());
 			lastseen.setText(context.getString(R.string.last_seen_message, dateFormat.format(coordinate.getDate())));
 			return convertView;
 		}

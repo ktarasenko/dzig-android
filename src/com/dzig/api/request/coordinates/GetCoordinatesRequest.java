@@ -12,7 +12,7 @@ import org.json.JSONObject;
 public class GetCoordinatesRequest extends BaseRequest<GetCoordinatesResponse>{
 
     protected GetCoordinatesRequest() {
-        super(BaseRequest.Method.GET, "coordinates");
+        super(BaseRequest.Method.GET, "coordinate");
     }
 
     /**
