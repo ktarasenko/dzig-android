@@ -14,20 +14,20 @@ import org.json.JSONObject;
 public class AuthRequest extends BaseRequest<UserResponse>{
 
 
-    protected AuthRequest(boolean tokenAuth) {
-        super(Method.GET, tokenAuth ?"../../_ah/login" : "auth");  //FIXME: this line stinks
+    protected AuthRequest() {
+        super(Method.GET, "auth");
     }
 
     public static AuthRequest newInstanceWebLogin(){
-        return (AuthRequest)new AuthRequest(false).addParam("continueUrl", "login://success");
+        return (AuthRequest)new AuthRequest().addParam("continueUrl", "login://success");
     }
 
-    public static AuthRequest newInstanceTokenLogin(String token){
-        return (AuthRequest)new AuthRequest(true).addParam("auth", token).addParam("continue", "http://google.com");
-    }
+//    public static AuthRequest newInstanceTokenLogin(String token){
+//        return (AuthRequest)new AuthRequest().addParam("auth", token).addParam("continue", "http://google.com");
+//    }
 
     public static AuthRequest newInstanceLogout(){
-        return (AuthRequest)new AuthRequest(false).addParam("method", "logout");
+        return (AuthRequest)new AuthRequest().addParam("method", "logout");
     }
 
 

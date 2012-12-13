@@ -9,42 +9,46 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 import com.dzig.R;
 import com.dzig.activities.HomeActivity;
 import com.dzig.activities.IntroActivity;
 import com.dzig.api.request.user.GetUserRequest;
 import com.dzig.api.response.user.UserResponse;
-import com.dzig.api.task.GetUserTask;
+import com.dzig.api.task.BasicTask;
 import com.dzig.app.DzigApplication;
 import com.dzig.model.User;
 import com.dzig.utils.UserPreferences;
 
-public class LoginDialogFragment extends DialogFragment implements View.OnClickListener {
+public class LoginDialogFragment extends DialogFragment implements View.OnClickListener, ItemsListDialogListener<Account> {
 
 
     private static final String BUNDLE_LIST = "list";
     private static final String BUNDLE_LOAD_USER = "loadUser";
-    private Account[] accounts;
     public static final String TAG = LoginDialogFragment.class.getSimpleName();
     private View button;
     private View progress;
+    private ItemsListDialogListener<Account> listener;
 
 
-    public static LoginDialogFragment newInstance(Account[] accounts) {
+
+    public static LoginDialogFragment newInstance(Account[] accounts, ItemsListDialogListener<Account> listener) {
         LoginDialogFragment fragment = new LoginDialogFragment();
         Bundle args = new Bundle();
         args.putParcelableArray(BUNDLE_LIST, accounts);
         fragment.setArguments(args);
+        fragment.setListener(listener);
         return fragment;
     }
 
+    private void setListener(ItemsListDialogListener listener) {
+        this.listener = listener;
+    }
+    
+    
     public static LoginDialogFragment newInstance(boolean shouldLoadUser) {
         LoginDialogFragment fragment = new LoginDialogFragment();
         Bundle args = new Bundle();
@@ -83,7 +87,7 @@ public class LoginDialogFragment extends DialogFragment implements View.OnClickL
                 .setItems(values, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int which) {
-                        doAuthentication(accounts[which]);
+                      listener.onItemSelected(accounts[which]);
                     }
                 })
                 .setNegativeButton(R.string.btn_cancel,
@@ -122,6 +126,9 @@ public class LoginDialogFragment extends DialogFragment implements View.OnClickL
 
             @Override
             protected void onPostExecute(UserResponse userResponse) {
+                if (userResponse.isOk()){
+                    DzigApplication.userManager().updateCurrentUser(userResponse.getUser());
+                }
                 if (progress != null){
                     button.setVisibility(View.VISIBLE);
                     progress.setVisibility(View.GONE);
@@ -143,7 +150,7 @@ public class LoginDialogFragment extends DialogFragment implements View.OnClickL
         if (size == 0){
             doWebLogin();
         } else if (size > 0){
-             LoginDialogFragment.newInstance(accounts).show(getFragmentManager(), LoginDialogFragment.TAG);
+             LoginDialogFragment.newInstance(accounts, this).show(getFragmentManager(), LoginDialogFragment.TAG);
         } else {
             doAuthentication(accounts[0]);
         }
@@ -168,7 +175,14 @@ public class LoginDialogFragment extends DialogFragment implements View.OnClickL
         getActivity().finish();
     }
 
-    private class LoadAndLaunch extends GetUserTask {
+    @Override
+    public void onItemSelected(Account item) {
+        doAuthentication(item);
+    }
+
+
+
+    private class LoadAndLaunch extends BasicTask<GetUserRequest, UserResponse> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -177,9 +191,10 @@ public class LoginDialogFragment extends DialogFragment implements View.OnClickL
         }
 
         @Override
-        protected void onPostExecute(UserResponse result) {
-            super.onPostExecute(result);
-
+        protected void onPostExecute(UserResponse userResponse) {
+            if (userResponse.isOk()){
+                DzigApplication.userManager().updateCurrentUser(userResponse.getUser());
+            }
             final boolean showIntro = UserPreferences.newInstance(getActivity()).isIntroRequired();
             if (showIntro) {
                 startActivity(new Intent(getActivity(), IntroActivity.class));

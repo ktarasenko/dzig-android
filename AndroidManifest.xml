@@ -46,11 +46,7 @@
         <activity
             android:name=".activities.IntroActivity">
         </activity>
-        
-        <activity
-            android:name=".activities.LoginActivity">
-        </activity>
-        
+
         <activity
             android:name=".activities.HomeActivity">
         </activity>
