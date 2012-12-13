@@ -9,7 +9,7 @@
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
               android:id="@+id/login_button"
-              android:text="@string/login_sign_in_button"/>
+              android:background="@drawable/login_btn_google"/>
 
     <ProgressBar
             android:id="@+id/login_progress"

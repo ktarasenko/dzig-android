@@ -129,13 +129,14 @@ public class LoginDialogFragment extends DialogFragment implements View.OnClickL
                 if (userResponse.isOk()){
                     DzigApplication.userManager().updateCurrentUser(userResponse.getUser());
                 }
-                if (progress != null){
-                    button.setVisibility(View.VISIBLE);
-                    progress.setVisibility(View.GONE);
-                }
+
                 if (userResponse.isOk()){
                     onLoginSuccessful();
                 } else {
+                    if (progress != null){
+                        button.setVisibility(View.VISIBLE);
+                        progress.setVisibility(View.GONE);
+                    }
                     Toast.makeText(getActivity(), "Not authenticated ", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -149,7 +150,7 @@ public class LoginDialogFragment extends DialogFragment implements View.OnClickL
         final int size = accounts.length;
         if (size == 0){
             doWebLogin();
-        } else if (size > 0){
+        } else if (size > 1){
              LoginDialogFragment.newInstance(accounts, this).show(getFragmentManager(), LoginDialogFragment.TAG);
         } else {
             doAuthentication(accounts[0]);

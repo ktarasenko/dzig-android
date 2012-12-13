@@ -19,13 +19,12 @@ public class HomeActivity extends FragmentActivity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-        Toast.makeText(this, "Welcome back " + User.currentUser(), Toast.LENGTH_SHORT).show();
-		startService(new Intent(this, LocationService.class));
+//		startService(new Intent(this, LocationService.class));
 	}
 	
 	@Override
 	protected void onPause() {
-		stopService(new Intent(this, LocationService.class));
+//		stopService(new Intent(this, LocationService.class));
 		super.onPause();
 	}
 }
