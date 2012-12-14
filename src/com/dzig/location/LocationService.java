@@ -38,6 +38,7 @@ import com.dzig.model.User;
 import com.dzig.utils.Logger;
 
 
+
 public class LocationService extends Service {
 
 	private String TAG="LocationService";
@@ -52,7 +53,7 @@ public class LocationService extends Service {
 	public static long MAX_TIME = AlarmManager.INTERVAL_FIFTEEN_MINUTES;
 	
 	protected Criteria criteria;
-	protected LastLocationFinder lastLocationFinder;
+	protected ILastLocationFinder lastLocationFinder;
 	protected LocationUpdateRequester locationUpdateRequester;
 	protected PendingIntent locationListenerPendingIntent;
 	private Coordinate currentCoordinate;
@@ -75,10 +76,10 @@ public class LocationService extends Service {
 	    Intent activeIntent = new Intent(this, LocationChangedReceiver.class);
 	    locationListenerPendingIntent = PendingIntent.getBroadcast(this, 0, activeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 	    
-	    lastLocationFinder = new LastLocationFinder(this);
+	    lastLocationFinder = PlatformSpecificImplementationFactory.getLastLocationFinder(this);
 	    lastLocationFinder.setChangedLocationListener(oneShotLastLocationUpdateListener);
 	    
-	    locationUpdateRequester = new LocationUpdateRequester(locationManager);
+	    locationUpdateRequester = PlatformSpecificImplementationFactory.getLocationUpdateRequester(locationManager);
 	    getLocationAndUpdateIt(true);
 	    
 	    super.onCreate();
@@ -142,9 +143,9 @@ public class LocationService extends Service {
                 try{
                         lastLocationFinder.getLastBestLocation(LocationService.MAX_DISTANCE,
 						System.currentTimeMillis()-LocationService.MAX_TIME);
-            } catch (IllegalArgumentException iex){
-                Logger.error("Location", "Unable to find provider. Need to handle this more intelligent", iex);
-            }
+	            } catch (IllegalArgumentException iex){
+	                Logger.error("Location", "Unable to find provider. Need to handle this more intelligent", iex);
+	            }
 				if (lastKnownLocation != null){				
 					setCurrentLocation(new Coordinate(""+ new String("Me").hashCode(),
                             new User("Me","Me","Me","Me"),

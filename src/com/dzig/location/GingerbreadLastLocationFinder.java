@@ -12,7 +12,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 
-public class LastLocationFinder {	
+public class GingerbreadLastLocationFinder implements ILastLocationFinder{
 	protected static String TAG = "LastLocationFinder";
 	protected static String SINGLE_LOCATION_UPDATE_ACTION = "com.radioactiveyak.places.SINGLE_LOCATION_UPDATE_ACTION";
 	  
@@ -21,13 +21,9 @@ public class LastLocationFinder {
 	protected LocationManager locationManager;
 	protected Context context;
 	protected Criteria criteria;
-	  
-	/**
-	 * Construct a new Last Location Finder.
-	 * @param context Context
-	 */
-	public LastLocationFinder(Context context) {
-	    this.context = context;
+	
+	public GingerbreadLastLocationFinder(Context context){
+		this.context = context;
 	    locationManager = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
 	    // Coarse accuracy is specified here to get the fastest possible result.
 	    // The calling Activity will likely (or have already) request ongoing
@@ -40,16 +36,7 @@ public class LastLocationFinder {
 	    Intent updateIntent = new Intent(SINGLE_LOCATION_UPDATE_ACTION);  
 	    singleUpatePI = PendingIntent.getBroadcast(context, 0, updateIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 	}
-	  
-	/**
-	 * Returns the most accurate and timely previously detected location.
-	 * Where the last result is beyond the specified maximum distance or 
-	 * latency a one-off location update is returned via the {@link LocationListener}
-	 * specified in {@link setChangedLocationListener}.
-	 * @param minDistance Minimum distance before we require a location update.
-	 * @param minTime Minimum time required between location updates.
-	 * @return The most accurate and / or timely previously detected location.
-	 */
+	@Override
 	public Location getLastBestLocation(int minDistance, long minTime) {
 		
 		Location bestResult = null;
@@ -90,7 +77,7 @@ public class LastLocationFinder {
 	  
 		return bestResult;
 	}
-	  
+
 	/**
 	 * This {@link BroadcastReceiver} listens for a single location
 	 * update before unregistering itself.
@@ -111,12 +98,13 @@ public class LastLocationFinder {
 			locationManager.removeUpdates(singleUpatePI);
 		}
 	};
-	  
+	
+	@Override
 	public void setChangedLocationListener(LocationListener l) {
 		locationListener = l;
 	}
 
-
+	@Override
 	public void cancel() {
 		locationManager.removeUpdates(singleUpatePI);
 	}

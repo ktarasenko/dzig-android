@@ -1,11 +1,10 @@
 package com.dzig.location;
 
-import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.location.Criteria;
 import android.location.LocationManager;
 
-public class LocationUpdateRequester {	
+public abstract class LocationUpdateRequester {	
 	
 	protected LocationManager locationManager;
 	  
@@ -21,9 +20,7 @@ public class LocationUpdateRequester {
    * @param criteria Criteria that define the Location Provider to use to detect the Location.
    * @param pendingIntent The Pending Intent to broadcast to notify the app of active location changes.
    */
-	public void requestLocationUpdates(long minTime, long minDistance, Criteria criteria, PendingIntent pendingIntent) {
-		locationManager.requestLocationUpdates(minTime, minDistance, criteria, pendingIntent); 
-	}
+	public void requestLocationUpdates(long minTime, long minDistance, Criteria criteria, PendingIntent pendingIntent) { }
 	  
    /**
    * Request passive location updates.
@@ -34,7 +31,5 @@ public class LocationUpdateRequester {
    * @param minDistance Minimum distance that should have been moved between location update broadcasts.
    * @param pendingIntent The Pending Intent to broadcast to notify the app of passive location changes.
    */
-  	public void requestPassiveLocationUpdates(long minTime, long minDistance, PendingIntent pendingIntent) {
-  		
-  	}
+  	public void requestPassiveLocationUpdates(long minTime, long minDistance, PendingIntent pendingIntent) {}
 }
