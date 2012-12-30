@@ -42,9 +42,8 @@ public class LocationService extends Service {
 			scheduler.scheduleAtFixedRate(updatePointsRunable, 0, 1, TimeUnit.SECONDS);
 		}
 		
-		Intent onClickIntent = new Intent(this, HomeActivity.class);
-		onClickIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-		PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, onClickIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+//		Intent onClickIntent = new Intent(this, HomeActivity.class);
+//		PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, onClickIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 		
 		Notification notification = new NotificationCompat.Builder(this).setSmallIcon(R.drawable.ic_launcher)
 				.setContentTitle("Dzig!").setContentText("Dzig service is running").build();
