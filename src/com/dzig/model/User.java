@@ -11,12 +11,14 @@ public class User implements Parcelable {
     private  final String id;
     private  final String email;
     private  final String nickName;
+    private  final String avatar;
 
 
-    public User(String id, String email, String nickName) {
+    public User(String id, String email, String nickName, String avatar) {
         this.id = id;
         this.email = email;
         this.nickName = nickName;
+        this.avatar = avatar;
     }
 
     public String getId() {
@@ -41,6 +43,7 @@ public class User implements Parcelable {
         out.writeString(id);
         out.writeString(email);
         out.writeString(nickName);
+        out.writeString(avatar);
     }
 
     public static User currentUser(){
@@ -54,6 +57,7 @@ public class User implements Parcelable {
             return new User(
                     in.readString(),
                     in.readString(),
+                    in.readString(),
                     in.readString());
 
         }
@@ -63,7 +67,8 @@ public class User implements Parcelable {
             return new User(
                     in.optString("id"),
                     in.optString("email"),
-                    in.optString("nickname"));
+                    in.optString("nickname"),
+                    in.optString("avatar"));
         }
 
 

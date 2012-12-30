@@ -10,7 +10,6 @@ import com.dzig.api.request.user.GetUserRequest;
 import com.dzig.app.DzigApplication;
 import com.dzig.R;
 import com.dzig.api.request.BaseRequest;
-import com.dzig.api.request.user.AuthRequest;
 import com.dzig.api.response.BaseResponse;
 import com.dzig.api.response.user.UserResponse;
 import com.dzig.utils.Logger;
@@ -20,7 +19,9 @@ import org.apache.http.client.CookieStore;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.params.HttpClientParams;
 import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.cookie.Cookie;
 import org.apache.http.impl.client.BasicCookieStore;
+import org.apache.http.impl.cookie.BasicClientCookie;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 
@@ -34,9 +35,10 @@ public class ApiClient {
     private final String baseUrl;
     private final String clientVersion;
     private final AndroidHttpClient client;
+    private HttpContext httpContext;
     private final Semaphore lock;
     private static final int WAITING_TIMEOUT = 300;
-
+    private final String baseUrlRoot;
 
 
     public ApiClient(Context context) {
@@ -44,6 +46,7 @@ public class ApiClient {
         client = AndroidHttpClient.newInstance("android");
         HttpClientParams.setRedirecting(client.getParams(), true);
         CookieStore cookieStore = new BasicCookieStore();
+
         HttpContext httpContext = new BasicHttpContext();
         httpContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
         lock = new Semaphore(1);
@@ -51,10 +54,9 @@ public class ApiClient {
             client.enableCurlLogging(TAG, Log.DEBUG);
         }
         baseUrl = context.getString(R.string.base_url, context.getString(R.string.api_version));
+        baseUrlRoot = "http://dzig-gae.appspot.com/";
         clientVersion = context.getString(R.string.client_version);
     }
-
-
 
     private HttpUriRequest createHttpRequest(BaseRequest<?> request) throws IOException {
         HttpUriRequest httpUriRequest = null;
@@ -68,17 +70,19 @@ public class ApiClient {
         return httpUriRequest;
     }
 
+    public void authenticate(String authToken){
+         httpContext = AuthenticatedAppEngineContext.newInstance(baseUrlRoot, authToken);
+    }
 
     public <T extends BaseResponse> T execute(BaseRequest<T> request) {
         try {
              T response = executeRequest(request);
             //check for unauthorized request
-            if (response.getStatus() == 403 && !(request instanceof AuthRequest)){
+            if (response.getStatus() == 403){
                 Account lastUser = DzigApplication.userManager().getLastUsedAccount();
                 if (lastUser != null){
-                    UserResponse authResponse = executeRequest(
-                            AuthRequest.newInstanceTokenLogin(
-                                    DzigApplication.userManager().updateToken(null, lastUser, true)));
+                    authenticate(DzigApplication.userManager().updateToken(null, lastUser, true));
+                    UserResponse authResponse = executeRequest(GetUserRequest.newInstance());
                     if (authResponse.isOk()){
                         DzigApplication.userManager().updateCurrentUser(authResponse.getUser());
                         if (request instanceof GetUserRequest) {
@@ -105,11 +109,17 @@ public class ApiClient {
         HttpUriRequest httpUriRequest = createHttpRequest(request);
         if (DzigApplication.getInstance().isConnected()){
             if (lock.tryAcquire(WAITING_TIMEOUT, TimeUnit.SECONDS)){
-                Logger.debug(TAG, "lock aquired: ");
-                HttpResponse response = client.execute(httpUriRequest);
-                lock.release();
-                Logger.debug(TAG, "lock released: ");
-                return  request.parseResponse(response);
+                HttpResponse response = null;
+                try {
+                    Logger.debug(TAG, "lock aquired: ");
+                    response = client.execute(httpUriRequest, httpContext);
+                } finally {
+                    lock.release();
+                    Logger.debug(TAG, "lock released: ");
+                }
+                if (response !=null){
+                    return  request.parseResponse(response);
+                }
             } else {
                 Logger.error(TAG, "lock not aquired:  timeout");
             }

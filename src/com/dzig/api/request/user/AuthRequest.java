@@ -7,6 +7,10 @@ import com.dzig.model.User;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+@Deprecated
+/**
+ * Totally corrupted
+ */
 public class AuthRequest extends BaseRequest<UserResponse>{
 
 
@@ -14,15 +18,13 @@ public class AuthRequest extends BaseRequest<UserResponse>{
         super(Method.GET, "auth");
     }
 
-
-
     public static AuthRequest newInstanceWebLogin(){
         return (AuthRequest)new AuthRequest().addParam("continueUrl", "login://success");
     }
 
-    public static AuthRequest newInstanceTokenLogin(String token){
-        return (AuthRequest)new AuthRequest().addParam("token", token);
-    }
+//    public static AuthRequest newInstanceTokenLogin(String token){
+//        return (AuthRequest)new AuthRequest().addParam("auth", token).addParam("continue", "http://google.com");
+//    }
 
     public static AuthRequest newInstanceLogout(){
         return (AuthRequest)new AuthRequest().addParam("method", "logout");
@@ -31,6 +33,7 @@ public class AuthRequest extends BaseRequest<UserResponse>{
 
     @Override
     protected UserResponse parseResponse(JSONObject response) throws JSONException {
+//        grab session cookie
         return new UserResponse(User.CREATOR.createFromJSON(response.getJSONObject("data")));
     }
 

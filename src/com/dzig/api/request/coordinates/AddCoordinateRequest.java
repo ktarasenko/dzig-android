@@ -10,7 +10,7 @@ import org.json.JSONObject;
 public class AddCoordinateRequest extends BaseRequest<AddCoordinateResponse>{
 
     protected AddCoordinateRequest() {
-        super(Method.POST, "coordinates");
+        super(Method.POST, "coordinate");
     }
 
     /**
