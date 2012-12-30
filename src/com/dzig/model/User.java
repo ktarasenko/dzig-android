@@ -32,6 +32,10 @@ public class User implements Parcelable {
     public String getNickName() {
         return nickName;
     }
+    
+    public String getAvatar() {
+		return avatar;
+	}
 
     @Override
     public int describeContents() {

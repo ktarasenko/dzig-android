@@ -6,6 +6,8 @@ import java.util.List;
 import com.dzig.R;
 import com.dzig.activities.CustomMapActivity;
 import com.dzig.model.Coordinate;
+import com.dzig.utils.UserIconHelper;
+import com.dzig.utils.Utils;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -74,9 +76,11 @@ public class MapLegendFragment extends Fragment{
 	static class MapLegendAdapter extends SimpleArrayAdapter<Coordinate>{
 		java.text.DateFormat dateFormat;
 		Context context;
+		UserIconHelper userIconHelper;
 		MapLegendAdapter(Context context){
 			this.context = context;
 			dateFormat = DateFormat.getMediumDateFormat(context);
+			userIconHelper = new UserIconHelper(context.getAssets());
 		}
 
 		@Override
@@ -89,7 +93,10 @@ public class MapLegendFragment extends Fragment{
 			TextView lastseen = (TextView)  convertView.findViewById(R.id.lastseen);
 			Coordinate coordinate = getItem(position);
 			username.setText(coordinate.getCreator().toString());
-			lastseen.setText(context.getString(R.string.last_seen_message, dateFormat.format(coordinate.getDate())));
+			String lastSeen = Utils.getLastSeenString(coordinate.getDate(), null);
+			lastseen.setText(
+					lastSeen != null ? lastSeen : context.getString(R.string.last_seen_message, dateFormat.format(coordinate.getDate())));
+			userpic.setImageBitmap(userIconHelper.getBitmap(coordinate));
 			return convertView;
 		}
 		

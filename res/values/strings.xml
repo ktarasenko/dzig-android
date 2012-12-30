@@ -13,7 +13,10 @@
 
     <string name="btn_ok">Ok</string>
     <string name="btn_cancel">Cancel</string>
-
+	<string name="btn_legend">Legend</string>
+    
+    
     <string name="dialog_account_title">Select account</string>
     <string name="dialog_progress_message">Please wait...</string>
+    
 </resources>

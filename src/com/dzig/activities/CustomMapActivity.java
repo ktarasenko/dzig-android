@@ -1,29 +1,26 @@
 package com.dzig.activities;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.ColorFilter;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.format.DateFormat;
-import android.util.Log;
 
 import com.dzig.R;
 import com.dzig.model.Coordinate;
+import com.dzig.utils.Logger;
+import com.dzig.utils.UserIconHelper;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.ItemizedOverlay;
 import com.google.android.maps.MapActivity;
@@ -45,10 +42,13 @@ public class CustomMapActivity extends MapActivity {
 	private MapView mapView; 
 	private MapOverlay mapOverlay;
 	private MyLocationOverlay mapOverlay2;
+	private UserIconHelper userIconHelper;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.map_view);		
+		setContentView(R.layout.map_view);
+		userIconHelper = new UserIconHelper(this.getAssets());
 		mapView = (MapView) findViewById(R.id.mapview);		
 		mapOverlay = new MapOverlay(getResources().getDrawable(R.drawable.map_marker));
 		mapOverlay2 = new MapOverlay2(this, mapView);
@@ -78,16 +78,18 @@ public class CustomMapActivity extends MapActivity {
 	}
 	
 	protected void setPoints(List<Coordinate> coordinates) {
-		ArrayList<OverlayItem> items = new ArrayList<OverlayItem>();
+		ArrayList<CoordinateOverlayItem> items = new ArrayList<CoordinateOverlayItem>();
 		java.text.DateFormat dateFormat = DateFormat.getMediumDateFormat(this);
 		for (Coordinate coordinate : coordinates) {
 			
 			GeoPoint point = new GeoPoint(toIntE6(coordinate.getLat()), toIntE6(coordinate.getLon()));
 			
 			String msg = dateFormat.format(coordinate.getDate()); //getResources().getString(R.string.last_seen_message, dateFormat.format(coordinate.getDate()));
-			OverlayItem overlayitem = new OverlayItem(point, coordinate.getCreator().toString(), msg);
+			CoordinateOverlayItem overlayitem = new CoordinateOverlayItem(point, coordinate.getCreator().toString(), msg, coordinate);
 			items.add(overlayitem);	
 		}
+		
+		
 		mapOverlay.setOverlays(items);
 		mapView.invalidate();
 	}
@@ -106,6 +108,7 @@ public class CustomMapActivity extends MapActivity {
 				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
+						Logger.debug(TAG, "setPoints "+list);
 						setPoints(list);		
 					}
 				});
@@ -115,21 +118,34 @@ public class CustomMapActivity extends MapActivity {
 		
 	};
 	
+	static class CoordinateOverlayItem extends OverlayItem{
+		final Coordinate coordinate;
+		
+		public CoordinateOverlayItem(GeoPoint point, String title, String message, Coordinate coordinate) {
+			super(point, title, message);
+			this.coordinate = coordinate;
+		}
+		
+		public Coordinate getCoordinate() {
+			return coordinate;
+		}
+	}
 
-	class MapOverlay extends ItemizedOverlay<OverlayItem>{
+	class MapOverlay extends ItemizedOverlay<CoordinateOverlayItem>{
 
-		private final ArrayList<OverlayItem> items = new ArrayList<OverlayItem>();
+		private final ArrayList<CoordinateOverlayItem> items = new ArrayList<CoordinateOverlayItem>();
 
 		public MapOverlay(Drawable defaultMarker) {
 			super(boundCenter(defaultMarker));
+			populate();
 		}
 		
-		public void addOverlay(OverlayItem overlay) {
+		public void addOverlay(CoordinateOverlayItem overlay) {
 			items.add(overlay);
 		    populate();
 		}
 		
-		public void setOverlays(List<OverlayItem> overlays) {
+		public void setOverlays(List<CoordinateOverlayItem> overlays) {
 			items.clear();
 			items.addAll(overlays);
 		    populate();
@@ -137,7 +153,7 @@ public class CustomMapActivity extends MapActivity {
 		}
 		
 		@Override
-		protected OverlayItem createItem(int index) {
+		protected CoordinateOverlayItem createItem(int index) {
 			return items.get(index);
 		}
 
@@ -147,25 +163,23 @@ public class CustomMapActivity extends MapActivity {
 		}
 		
 		private Point pt = new Point();
-		private Point pt2 = new Point();
 		private Paint paint = new Paint();
+		private Matrix matrix = new Matrix();
 		
 		@Override
 		public void draw(Canvas canvas, MapView map, boolean shadow) {
-			for (OverlayItem item : items) {
+			for (CoordinateOverlayItem item : items) {
 				drawPoint(canvas, map, item, shadow);
 			}
 		}
-		private void drawPoint(Canvas canvas, MapView map, OverlayItem item, boolean shaddow){
+		
+		private void drawPoint(Canvas canvas, MapView map, CoordinateOverlayItem item, boolean shaddow){
 			GeoPoint point = item.getPoint();
             Projection projection = map.getProjection();
 	           
             projection.toPixels(point,pt);
             if (shaddow){
-	            GeoPoint newGeos = new GeoPoint(point.getLatitudeE6()+(5000), point.getLongitudeE6()); // adjust your radius accordingly
-	            
-	            projection.toPixels(newGeos,pt2);
-	            float circleRadius = Math.abs(pt2.y-pt.y);
+	            float circleRadius = Math.abs(projection.metersToEquatorPixels((float)item.getCoordinate().getAccuracy()));
 	
 	            paint.reset();
 	            paint.setFlags(Paint.ANTI_ALIAS_FLAG);
@@ -177,17 +191,25 @@ public class CustomMapActivity extends MapActivity {
 	            paint.setStyle(Style.STROKE);
 	            canvas.drawCircle((float)pt.x, (float)pt.y, circleRadius, paint);
             } else {
-	            paint.setColor(0xFFFF0000);
-	            paint.setTextSize(25);
-	            String text = item.getTitle();
-	            float w = paint.measureText(text, 0, text.length());
-	            canvas.drawText(text, pt.x - w/2, pt.y, paint);
-	            
-	            paint.setTextSize(12);
-	            paint.setColor(0xFF0000FF);
-	            String text2 = item.getSnippet();//getString(R.string.last_seen_message, item.getSnippet());
-	            float w2 = paint.measureText(text2, 0, text2.length());
-	            canvas.drawText(text2, pt.x - w2/2, pt.y+10, paint);
+            	Bitmap bitmap = userIconHelper.getBitmap(item.coordinate);
+            	if (bitmap != null){
+            		matrix.reset();
+            		float scale = Math.min(50F / bitmap.getWidth(), 50F / bitmap.getHeight());
+            		matrix.postScale(scale, scale);
+            		matrix.postTranslate(pt.x - bitmap.getWidth()*scale/2, pt.y - bitmap.getHeight()*scale/2);
+            		canvas.drawBitmap(bitmap, matrix, null);
+            	}
+//	            paint.setColor(0xFFFF0000);
+//	            paint.setTextSize(25);
+//	            String text = item.getTitle();
+//	            float w = paint.measureText(text, 0, text.length());
+//	            canvas.drawText(text, pt.x - w/2, pt.y, paint);
+//	            
+//	            paint.setTextSize(12);
+//	            paint.setColor(0xFF0000FF);
+//	            String text2 = item.getSnippet();//getString(R.string.last_seen_message, item.getSnippet());
+//	            float w2 = paint.measureText(text2, 0, text2.length());
+//	            canvas.drawText(text2, pt.x - w2/2, pt.y+10, paint);
             }
 //            Bitmap markerBitmap = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.pin);
 //            canvas.drawBitmap(markerBitmap,pt.x,pt.y-markerBitmap.getHeight(),null);

@@ -7,18 +7,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import com.dzig.R;
-import com.dzig.activities.CustomMapActivity;
-import com.dzig.activities.HomeActivity;
-import com.dzig.app.DzigApplication;
-import com.dzig.model.Coordinate;
-
-
 import android.app.AlarmManager;
-
 import android.app.Notification;
 import android.app.NotificationManager;
-
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -32,8 +23,12 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.util.Log;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
+
+import com.dzig.R;
+import com.dzig.activities.CustomMapActivity;
+import com.dzig.model.Coordinate;
 import com.dzig.model.User;
 import com.dzig.utils.Logger;
 
@@ -219,7 +214,7 @@ public class LocationService extends Service {
 		registerReceiver(broadcastReceiver, new IntentFilter(CustomMapActivity.ACTION_GET_POINTS));
 		if (scheduler == null){
 			scheduler = Executors.newScheduledThreadPool(1);
-			scheduler.scheduleAtFixedRate(updatePointsRunable, 0, 1, TimeUnit.SECONDS);
+			scheduler.scheduleAtFixedRate(updatePointsRunable, 0, 5, TimeUnit.SECONDS);
 		}
 		
 //		Intent onClickIntent = new Intent(this, HomeActivity.class);
@@ -259,10 +254,14 @@ public class LocationService extends Service {
 		
 		@Override
 		public void run() {
-			debugUpdateCoordinates();
-			Intent intent = new Intent(CustomMapActivity.ACTION_UPDATE_POINTS);
-			intent.putParcelableArrayListExtra(CustomMapActivity.EXTRA_POINTS, coordinates);
-			sendBroadcast(intent);
+			try{
+				debugUpdateCoordinates();
+				Intent intent = new Intent(CustomMapActivity.ACTION_UPDATE_POINTS);
+				intent.putParcelableArrayListExtra(CustomMapActivity.EXTRA_POINTS, coordinates);
+				sendBroadcast(intent);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	};
 
@@ -273,14 +272,14 @@ public class LocationService extends Service {
 	
 	//============================ DEBUG =================================
 	private static final String[] debugNickNames = {"User","Jade", "Sub Zero", "Raiden", "Goro", "Lui Kang", "Cyrax", "Shang Tsung", "Kabal"};
-	private static final String[] debugUserPics = {"A03", "B02", "C01", "E05", "F04", "G02", "H01", "I03"};
+	private static final String[] debugUserPics =  {"A03", "B02",  "C01", 	   "E05",    "F04",  "G02",      "H01",   "I03",         "K05"};
 	private void debugGenerateCoordinates(){
 		Random random = new Random();
 		for (int i = 0; i < debugNickNames.length; i++) {
 			double lat = 50.422519 + random.nextDouble()/10;
 			double lon = 30.50344 + random.nextDouble()/10;
             User u = new User(""+debugNickNames[i].hashCode(), debugNickNames[i]+"@gmail.com",  debugNickNames[i], debugUserPics[i]);
-			coordinates.add(new Coordinate(""+debugNickNames[i].hashCode(), u, new Date(), lat, lon, 5));
+			coordinates.add(new Coordinate(""+debugNickNames[i].hashCode(), u, new Date(), lat, lon, 5 + random.nextInt(5000)));
 		}
 	}
 	

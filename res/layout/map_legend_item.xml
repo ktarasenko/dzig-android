@@ -3,13 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal" 
-    android:background="@drawable/chat_item_bcg"
+    android:background="@drawable/legend_item_bcg"
     >
 
     <ImageView
         android:id="@+id/userpic"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="70dip"
+        android:layout_height="70dip"
         android:src="@drawable/demo_userpic" 
         android:layout_marginRight="5dip"/>
     <TextView

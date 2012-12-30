@@ -1,18 +1,16 @@
 package com.dzig.loader;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.v4.content.AsyncTaskLoader;
 import android.util.Pair;
+
+import com.dzig.utils.Utils;
 
 public class BitmapAssetCacheLoader<KEY> extends AsyncTaskLoader<List<Pair<KEY, Bitmap>>> {
 	private AssetManager assetManager;
@@ -33,7 +31,7 @@ public class BitmapAssetCacheLoader<KEY> extends AsyncTaskLoader<List<Pair<KEY, 
 	public List<Pair<KEY, Bitmap>> loadInBackground() {
 		ArrayList<Pair<KEY, Bitmap>> list = new ArrayList<Pair<KEY,Bitmap>>(keyPathPairs.size());
 		for (Pair<KEY,String> pair : keyPathPairs) {
-			list.add(new Pair<KEY, Bitmap>(pair.first, BitmapAssetLoader.loadFromAssets(assetManager, pair.second, defaultAsset)));
+			list.add(new Pair<KEY, Bitmap>(pair.first,  Utils.loadBitmapFromAssets(assetManager, pair.second, defaultAsset)));
 		}
 		return list;
 	}
