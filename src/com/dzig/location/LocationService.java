@@ -250,7 +250,7 @@ public class LocationService extends Service {
 		@Override
 		public void onReceive(Context arg0, Intent intent) {
 			if (CustomMapActivity.ACTION_GET_POINTS.equals(intent.getAction())){
-				forseUpdatePoints();
+				forceUpdatePoints();
 			}
 			
 		}
@@ -271,7 +271,7 @@ public class LocationService extends Service {
 		}
 	};
 
-	protected void forseUpdatePoints() {
+	protected void forceUpdatePoints() {
 		if (scheduler != null) 
 			scheduler.execute(updatePointsRunable);		
 	}
