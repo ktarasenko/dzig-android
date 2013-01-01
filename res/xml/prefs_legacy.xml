@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <Preference
+            android:title="@string/prefs_category_location"
+            android:summary="@string/prefs_category_location_desc"  >
+        <intent
+                android:targetPackage="com.dzig"
+                android:targetClass="com.dzig.activities.SettingsActivity"
+                android:action="com.dzig.PREFS_LOCATION" />
+    </Preference>
+    <Preference
+            android:title="@string/prefs_category_mock"
+            android:summary="@string/prefs_category_mock_desc" >
+        <intent
+                android:targetPackage="com.dzig"
+                android:targetClass="com.dzig.activities.SettingsActivity"
+                android:action="com.dzig.PREFS_MOCK" />
+    </Preference>
+</PreferenceScreen>

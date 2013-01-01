@@ -1,5 +1,7 @@
 package com.dzig.activities;
 
+import android.view.*;
+import android.widget.Toast;
 import com.dzig.R;
 import com.dzig.actionbar.ActionBarActivity;
 import com.dzig.location.LocationService;
@@ -9,8 +11,6 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.view.KeyEvent;
-import android.view.View;
 
 public class HomeActivity extends ActionBarActivity {
 	boolean isMultipane;
@@ -57,4 +57,25 @@ public class HomeActivity extends ActionBarActivity {
 		stopService(new Intent(this, LocationService.class));
 		super.onPause();
 	}
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.main, menu);
+
+        // Calling super after populating the menu is necessary here to ensure that the
+        // action bar helpers have a chance to handle this event.
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+             case R.id.menu_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
+                break;
+
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }

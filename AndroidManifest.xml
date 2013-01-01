@@ -57,6 +57,11 @@
         <activity
             android:name=".activities.CustomMapActivity">
         </activity>
+
+
+        <activity
+                android:name=".activities.SettingsActivity">
+        </activity>
         
         
         <service android:name=".location.LocationService" />
