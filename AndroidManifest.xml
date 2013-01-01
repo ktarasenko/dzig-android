@@ -49,11 +49,18 @@
 
         <activity
             android:name=".activities.HomeActivity"
-            android:configChanges="orientation|keyboard">
+            android:configChanges="orientation|keyboard"
+            android:theme="@style/AppTheme.ActionBar"
+            android:launchMode="singleTop">
         </activity>
         
         <activity
             android:name=".activities.CustomMapActivity">
+        </activity>
+
+
+        <activity
+                android:name=".activities.SettingsActivity">
         </activity>
         
         

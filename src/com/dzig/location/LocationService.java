@@ -28,6 +28,7 @@ import android.util.Log;
 
 import com.dzig.R;
 import com.dzig.activities.CustomMapActivity;
+import com.dzig.activities.HomeActivity;
 import com.dzig.model.Coordinate;
 import com.dzig.model.CoordinatesDb;
 import com.dzig.model.User;
@@ -218,12 +219,17 @@ public class LocationService extends Service {
 			scheduler.scheduleAtFixedRate(updatePointsRunable, 0, 5, TimeUnit.SECONDS);
 		}
 		
-//		Intent onClickIntent = new Intent(this, HomeActivity.class);
-//		PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, onClickIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+		Intent onClickIntent = new Intent(this, HomeActivity.class);
+		PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, onClickIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 		
 		Notification notification = new NotificationCompat.Builder(this).setSmallIcon(R.drawable.ic_launcher)
-				.setContentTitle("Dzig!").setContentText("Dzig service is running").build();
+				.setContentTitle("Dzig!")
+                .setContentText("Dzig service is running")
+                .setContentIntent(pendingIntent)
+                .build();
+        notification.flags = Notification.FLAG_ONGOING_EVENT;
 		NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
 		manager.notify(notificationId, notification);
 		
 		return START_STICKY;
@@ -245,7 +251,7 @@ public class LocationService extends Service {
 		@Override
 		public void onReceive(Context arg0, Intent intent) {
 			if (CustomMapActivity.ACTION_GET_POINTS.equals(intent.getAction())){
-				forseUpdatePoints();
+				forceUpdatePoints();
 			}
 			
 		}
@@ -269,7 +275,7 @@ public class LocationService extends Service {
 		}
 	};
 
-	protected void forseUpdatePoints() {
+	protected void forceUpdatePoints() {
 		if (scheduler != null) 
 			scheduler.execute(updatePointsRunable);		
 	}

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <Preference
+            android:key="prefs_location_interval1"
+            android:title="Mock1"/>
+
+    <Preference
+            android:key="prefs_location_distance2"
+            android:title="Mock2" />
+</PreferenceScreen>
