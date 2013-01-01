@@ -1,6 +1,7 @@
 package com.dzig.activities;
 
 import com.dzig.R;
+import com.dzig.actionbar.ActionBarActivity;
 import com.dzig.location.LocationService;
 import com.dzig.utils.Logger;
 
@@ -11,7 +12,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.KeyEvent;
 import android.view.View;
 
-public class HomeActivity extends FragmentActivity {
+public class HomeActivity extends ActionBarActivity {
 	boolean isMultipane;
 	View legendContainer;
 	View openLegendButton;
@@ -48,7 +49,7 @@ public class HomeActivity extends FragmentActivity {
 	protected void onResume() {
 		super.onResume();
 		ComponentName serviceName = startService(new Intent(this, LocationService.class));
-		Logger.info("HomeActivity", serviceName +" started");
+		Logger.info("HomeActivity", serviceName + " started");
 	}
 	
 	@Override

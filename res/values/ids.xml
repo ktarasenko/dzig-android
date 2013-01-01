@@ -15,13 +15,9 @@
   -->
 
 <resources>
-
-    <declare-styleable name="AppTheme.ActionBar">
-        <attr name="actionbarCompatTitleStyle" format="reference" />
-        <attr name="actionbarCompatItemStyle" format="reference" />
-        <attr name="actionbarCompatItemHomeStyle" format="reference" />
-        <attr name="actionbarCompatProgressIndicatorStyle" format="reference" />
-    </declare-styleable>
-
-
+    <item type="id" name="actionbar_compat" />
+    <item type="id" name="actionbar_compat_title" />
+    <item type="id" name="actionbar_compat_item_refresh_progress" />
+    <item type="id" name="actionbar_compat_item_refresh" />
+    <item type="id" name="menu_refresh" />
 </resources>

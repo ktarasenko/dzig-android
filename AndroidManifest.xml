@@ -50,6 +50,7 @@
         <activity
             android:name=".activities.HomeActivity"
             android:configChanges="orientation|keyboard"
+            android:theme="@style/AppTheme.ActionBar"
             android:launchMode="singleTop">
         </activity>
         

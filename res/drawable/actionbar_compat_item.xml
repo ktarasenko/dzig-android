@@ -14,14 +14,10 @@
   limitations under the License.
   -->
 
-<resources>
-
-    <declare-styleable name="AppTheme.ActionBar">
-        <attr name="actionbarCompatTitleStyle" format="reference" />
-        <attr name="actionbarCompatItemStyle" format="reference" />
-        <attr name="actionbarCompatItemHomeStyle" format="reference" />
-        <attr name="actionbarCompatProgressIndicatorStyle" format="reference" />
-    </declare-styleable>
-
-
-</resources>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/actionbar_compat_item_pressed"
+        android:state_pressed="true" />
+    <item android:drawable="@drawable/actionbar_compat_item_focused"
+        android:state_focused="true" />
+    <item android:drawable="@android:color/transparent" />
+</selector>
