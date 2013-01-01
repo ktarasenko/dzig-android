@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
-import android.util.Log;
 
 public class LocationChangedReceiver  extends BroadcastReceiver {
 	protected static String TAG = "LocationChangedReceiver";

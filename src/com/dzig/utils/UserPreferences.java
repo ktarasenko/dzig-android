@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import java.util.UUID;
-
 public class UserPreferences {
 
     public static final String PREF_LAST_USER = "lastUser";

@@ -49,7 +49,7 @@ public class Coordinate implements Parcelable{
     public double getAccuracy() {
         return accuracy;
     }
-
+    
     @Override
     public int describeContents() {
         return 2001;

@@ -29,6 +29,7 @@ import android.util.Log;
 import com.dzig.R;
 import com.dzig.activities.CustomMapActivity;
 import com.dzig.model.Coordinate;
+import com.dzig.model.CoordinatesDb;
 import com.dzig.model.User;
 import com.dzig.utils.Logger;
 
@@ -256,6 +257,9 @@ public class LocationService extends Service {
 		public void run() {
 			try{
 				debugUpdateCoordinates();
+				CoordinatesDb coordinatesDb = new CoordinatesDb(LocationService.this);
+				coordinatesDb.update(coordinates);
+				coordinatesDb.close();
 				Intent intent = new Intent(CustomMapActivity.ACTION_UPDATE_POINTS);
 				intent.putParcelableArrayListExtra(CustomMapActivity.EXTRA_POINTS, coordinates);
 				sendBroadcast(intent);

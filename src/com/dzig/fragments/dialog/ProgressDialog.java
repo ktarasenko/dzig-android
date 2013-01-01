@@ -1,12 +1,10 @@
 package com.dzig.fragments.dialog;
 
 
-import android.accounts.Account;
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+
 import com.dzig.R;
 
 public class ProgressDialog extends DialogFragment {
@@ -29,7 +27,10 @@ public class ProgressDialog extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle bundle) {
-        String message = getArguments().getString(BUNDLE_MESSAGE, getString(R.string.dialog_progress_message));
+        String message = getArguments().getString(BUNDLE_MESSAGE);
+        if (message == null){
+        	message = getString(R.string.dialog_progress_message);
+        }
         return new android.app.ProgressDialog.Builder(getActivity())
                 .setMessage(message)
                 .create();
