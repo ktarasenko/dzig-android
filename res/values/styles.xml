@@ -3,6 +3,8 @@
 
     <style name="AppTheme" parent="android:Theme.Light.NoTitleBar"/>
 
+    <style name="AppTheme.Default" parent="android:Theme.Light" />
+
     <style name="AppTheme.ActionBar" parent="android:style/Theme.Light">
         <item name="android:windowTitleSize">@dimen/actionbar_compat_height</item>
         <item name="android:windowTitleBackgroundStyle">@style/ActionBarCompat</item>

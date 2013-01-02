@@ -29,11 +29,13 @@ import android.util.Log;
 import com.dzig.R;
 import com.dzig.activities.CustomMapActivity;
 import com.dzig.activities.HomeActivity;
+import com.dzig.activities.SettingsActivity;
+import com.dzig.app.DzigApplication;
 import com.dzig.model.Coordinate;
 import com.dzig.model.CoordinatesDb;
 import com.dzig.model.User;
 import com.dzig.utils.Logger;
-
+import com.dzig.utils.UserPreferences;
 
 
 public class LocationService extends Service {
@@ -41,19 +43,19 @@ public class LocationService extends Service {
 	private String TAG="LocationService";
 	
 	public static boolean USE_GPS_WHEN_ACTIVITY_VISIBLE = true;
-	
+
 	// The default search radius when searching for places nearby.
 	public static int DEFAULT_RADIUS = 150;
-	// The maximum distance the user should travel between location updates. 
-	public static int MAX_DISTANCE = DEFAULT_RADIUS/2;
+	// The maximum distance the user should travel between location updates.
+	private int MAX_DISTANCE;
 	// The maximum time that should pass before the user gets a location update.
-	public static long MAX_TIME = AlarmManager.INTERVAL_FIFTEEN_MINUTES;
-	
+	private long MAX_TIME;
+
 	protected Criteria criteria;
 	protected ILastLocationFinder lastLocationFinder;
 	protected LocationUpdateRequester locationUpdateRequester;
 	protected PendingIntent locationListenerPendingIntent;
-	private Coordinate currentCoordinate;
+	private Location currentLocation;
 	private LocationManager locationManager;
 	
 	private ArrayList<Coordinate> coordinates = new ArrayList<Coordinate>();
@@ -61,7 +63,9 @@ public class LocationService extends Service {
 	@Override
 	public void onCreate() {
 		Log.e(TAG, "onCreate");
-		
+
+        updateSettings();
+
 		locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 		
 		criteria = new Criteria();
@@ -81,10 +85,15 @@ public class LocationService extends Service {
 	    
 	    super.onCreate();
 	}
-	
 
-	
-	protected BroadcastReceiver locProviderDisabledReceiver = new BroadcastReceiver() {
+    private void updateSettings() {
+        UserPreferences prefs = UserPreferences.newInstance(this);
+        MAX_DISTANCE = prefs.getInt(getString(R.string.prefs_location_distance_key), DEFAULT_RADIUS/2);
+        MAX_TIME = prefs.getLong(getString(R.string.prefs_location_interval_key), AlarmManager.INTERVAL_FIFTEEN_MINUTES);
+    }
+
+
+    protected BroadcastReceiver locProviderDisabledReceiver = new BroadcastReceiver() {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			boolean providerDisabled = !intent.getBooleanExtra(LocationManager.KEY_PROVIDER_ENABLED, false);
@@ -115,12 +124,7 @@ public class LocationService extends Service {
 	protected LocationListener oneShotLastLocationUpdateListener = new LocationListener() {
 		public void onLocationChanged(Location l) {			
 			Log.d(TAG,"onLocationChanged");
-			setCurrentLocation(new Coordinate(""+ new String("Me").hashCode(), 
-					new User("Me","Me","Me","Me"),
-					new Date(l.getTime()), 
-					l.getLatitude(), 
-					l.getLongitude(), 
-					l.getAccuracy()));
+			setCurrentLocation(l);
 		}
 		   
 	    public void onProviderDisabled(String provider) {}
@@ -138,18 +142,13 @@ public class LocationService extends Service {
 
 				Location lastKnownLocation = null;
                 try{
-                        lastLocationFinder.getLastBestLocation(LocationService.MAX_DISTANCE,
-						System.currentTimeMillis()-LocationService.MAX_TIME);
+                        lastLocationFinder.getLastBestLocation(MAX_DISTANCE,
+						System.currentTimeMillis()-MAX_TIME);
 	            } catch (IllegalArgumentException iex){
 	                Logger.error("Location", "Unable to find provider. Need to handle this more intelligent", iex);
 	            }
 				if (lastKnownLocation != null){				
-					setCurrentLocation(new Coordinate(""+ new String("Me").hashCode(),
-                            new User("Me","Me","Me","Me"),
-							new Date(lastKnownLocation.getTime()), 
-							lastKnownLocation.getLatitude(), 
-							lastKnownLocation.getLongitude(), 
-							lastKnownLocation.getAccuracy()));
+					setCurrentLocation(lastKnownLocation);
 		        } 
 				else {
 					Log.d(TAG,"Last known location: is null");
@@ -167,16 +166,18 @@ public class LocationService extends Service {
 	
 	protected void toggleUpdatesWhenLocationChanges(boolean updateWhenLocationChanges) {		
 		// Start or stop listening for location changes
-		if (updateWhenLocationChanges)
+		if (updateWhenLocationChanges){
 			requestLocationUpdates();
-		else 
+        }
+		else  {
 			disableLocationUpdates();
+        }
 	}
 	
 	protected void requestLocationUpdates() {
 	    // Normal updates while activity is visible.
         try {
-	    locationUpdateRequester.requestLocationUpdates(LocationService.MAX_TIME, LocationService.MAX_DISTANCE, criteria, locationListenerPendingIntent);
+	    locationUpdateRequester.requestLocationUpdates(MAX_TIME, MAX_DISTANCE, criteria, locationListenerPendingIntent);
 	    
 	    // Register a receiver that listens for when the provider I'm using has been disabled. 
 	    IntentFilter intentFilter = new IntentFilter(LocationChangedReceiver.ACTIVE_LOCATION_UPDATE_PROVIDER_DISABLED);
@@ -197,7 +198,11 @@ public class LocationService extends Service {
 	   * Stop listening for location updates
 	   */
 	protected void disableLocationUpdates() {
-		unregisterReceiver(locProviderDisabledReceiver);
+        try {
+		    unregisterReceiver(locProviderDisabledReceiver);
+        } catch (IllegalArgumentException ex){
+            //do nothing
+        }
 		locationManager.removeUpdates(locationListenerPendingIntent);
 		locationManager.removeUpdates(bestInactiveLocationProviderListener);	    
 		lastLocationFinder.cancel();
@@ -238,8 +243,11 @@ public class LocationService extends Service {
 	public void onDestroy() {
 		NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		manager.cancel(notificationId);
-		
-		unregisterReceiver(broadcastReceiver);
+        try {
+            unregisterReceiver(broadcastReceiver);
+        } catch (IllegalArgumentException ex){
+            //do nothing
+        }
 		disableLocationUpdates();
 		scheduler.shutdown();
 		scheduler = null;	
@@ -252,7 +260,10 @@ public class LocationService extends Service {
 		public void onReceive(Context arg0, Intent intent) {
 			if (CustomMapActivity.ACTION_GET_POINTS.equals(intent.getAction())){
 				forceUpdatePoints();
-			}
+			}  else if (SettingsActivity.ACTION_SETTINGS_LOCATION_UPDATED.equals(intent.getAction())){
+                updateSettings();
+                requestLocationUpdates();
+            }
 			
 		}
 	};
@@ -306,18 +317,18 @@ public class LocationService extends Service {
 			newCoordinates.add(new Coordinate(coordinate.getId(), coordinate.getCreator(), new Date(), 
 					coordinate.getLat()+dlat, coordinate.getLon()+dlon, coordinate.getAccuracy()));
 		}
-		if (currentCoordinate != null) {
-			newCoordinates.set(0, currentCoordinate);
+		if (currentLocation != null) {
+			newCoordinates.set(0, new Coordinate("-1",
+                    DzigApplication.userManager().getCurrentUser(),
+                    new Date(),
+                    currentLocation.getLatitude(),
+                    currentLocation.getLongitude(),
+                    currentLocation.getAccuracy()));
 		}
 		coordinates = newCoordinates;		
 	}
 	
-	private synchronized void setCurrentLocation(Coordinate l){
-		if (currentCoordinate != null) {
-			currentCoordinate = l;
-		}
-		else {
-			currentCoordinate = new Coordinate(l.getId(), l.getCreator(), l.getDate(), l.getLat(), l.getLon(), l.getAccuracy());
-		}		
+	private synchronized void setCurrentLocation(Location l){
+		currentLocation = l;
 	}
 }

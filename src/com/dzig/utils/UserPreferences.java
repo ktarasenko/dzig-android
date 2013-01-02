@@ -36,5 +36,21 @@ public class UserPreferences {
     public void putString(String key, String value){
         preferences.edit().putString(key, value).commit();
     }
+
+    public long getLong(String key, Long defaultValue) {
+        try {
+            return Long.parseLong(preferences.getString(key, "null"));
+        } catch (NumberFormatException ne){
+            return defaultValue;
+        }
+    }
+
+    public int getInt(String key, int defaultValue) {
+        try {
+            return Integer.parseInt(preferences.getString(key, "null"));
+        } catch (NumberFormatException ne){
+            return defaultValue;
+        }
+    }
 }
 

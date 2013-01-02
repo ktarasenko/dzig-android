@@ -2,11 +2,22 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <Preference
-            android:key="prefs_location_interval"
-            android:title="@string/prefs_location_interval"/>
+    <CheckBoxPreference
+            android:key="@string/prefs_location_background_key"
+            android:title="@string/prefs_location_background"
+            android:defaultValue="false"/>
 
-    <Preference
-            android:key="prefs_location_distance"
-            android:title="@string/prefs_location_distance" />
+    <EditTextPreference
+            android:key="@string/prefs_location_interval_key"
+            android:title="@string/prefs_location_interval"
+            android:inputType="numberDecimal"
+            android:gravity="right"
+            android:defaultValue="900000"/>
+
+    <EditTextPreference
+            android:key="@string/prefs_location_distance_key"
+            android:title="@string/prefs_location_distance"
+            android:inputType="numberDecimal"
+            android:gravity="right"
+            android:defaultValue="75"/>
 </PreferenceScreen>

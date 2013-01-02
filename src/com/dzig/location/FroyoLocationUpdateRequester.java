@@ -15,7 +15,7 @@ public class FroyoLocationUpdateRequester extends LocationUpdateRequester{
 	public void requestLocationUpdates(long minTime, long minDistance, Criteria criteria, PendingIntent pendingIntent) {
 	    // Froyo introduced the Passive Location Provider, which receives updates whenever a 3rd party app 
 	    // receives location updates.
-	    locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, LocationService.MAX_TIME, LocationService.MAX_DISTANCE, pendingIntent);
+	    locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, minTime, minDistance, pendingIntent);
 	}
 
 }

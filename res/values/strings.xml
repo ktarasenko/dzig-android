@@ -33,8 +33,13 @@
     <string name="prefs_category_mock">Mock</string>
     <string name="prefs_category_mock_desc">Test header</string>
 
-    <string name="prefs_location_interval">Update Interval</string>
-    <string name="prefs_location_distance">Minimum distance</string>
+    <string name="prefs_location_background_key">prefs_location_background</string>
+    <string name="prefs_location_interval_key">prefs_location_interval</string>
+    <string name="prefs_location_distance_key">prefs_location_distance</string>
+
+    <string name="prefs_location_background">Work in background</string>
+    <string name="prefs_location_interval">Update Interval (sec)</string>
+    <string name="prefs_location_distance">Minimum distance (m)</string>
 
 
 

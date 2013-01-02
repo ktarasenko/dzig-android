@@ -56,12 +56,12 @@
         
         <activity
             android:name=".activities.CustomMapActivity">
-        </activity>
+    </activity>
 
 
         <activity
-                android:name=".activities.SettingsActivity">
-        </activity>
+                android:name=".activities.SettingsActivity"
+                android:theme="@style/AppTheme.Default"/>
         
         
         <service android:name=".location.LocationService" />

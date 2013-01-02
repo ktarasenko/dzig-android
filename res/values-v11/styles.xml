@@ -2,7 +2,7 @@
 
     <style name="AppTheme" parent="android:Theme.Holo.Light.NoActionBar" />
 
-
+    <style name="AppTheme.Default" parent="android:Theme.Holo.Light" />
 
     <style name="AppTheme.ActionBar" parent="android:Theme.Holo.Light">
         <item name="android:windowTitleSize">@dimen/actionbar_compat_height</item>
