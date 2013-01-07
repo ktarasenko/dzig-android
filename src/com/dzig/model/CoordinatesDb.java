@@ -130,7 +130,7 @@ public class CoordinatesDb extends SQLiteOpenHelper {
 		return db.rawQuery(sql, null);
 	}
 	
-	public static User parseUser(Cursor cursor){
+	private static User parseUser(Cursor cursor){
 		return new User(cursor.getString(1), cursor.getString(6), cursor.getString(7), cursor.getString(8));
 	}
 	
