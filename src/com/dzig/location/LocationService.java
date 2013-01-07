@@ -42,170 +42,13 @@ public class LocationService extends Service {
 
 	private String TAG="LocationService";
 	
-	public static boolean USE_GPS_WHEN_ACTIVITY_VISIBLE = true;
-
-	// The default search radius when searching for places nearby.
-	public static int DEFAULT_RADIUS = 150;
-	// The maximum distance the user should travel between location updates.
-	private int MAX_DISTANCE;
-	// The maximum time that should pass before the user gets a location update.
-	private long MAX_TIME;
-
-	protected Criteria criteria;
-	protected ILastLocationFinder lastLocationFinder;
-	protected LocationUpdateRequester locationUpdateRequester;
-	protected PendingIntent locationListenerPendingIntent;
-	private Location currentLocation;
-	private LocationManager locationManager;
-	
 	private ArrayList<Coordinate> coordinates = new ArrayList<Coordinate>();
-	
+	private UserLocationHelper userLocationHelper;
 	@Override
 	public void onCreate() {
 		Log.e(TAG, "onCreate");
-
-        updateSettings();
-
-		locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-		
-		criteria = new Criteria();
-	    if (LocationService.USE_GPS_WHEN_ACTIVITY_VISIBLE)
-	      criteria.setAccuracy(Criteria.ACCURACY_FINE);
-	    else
-	      criteria.setPowerRequirement(Criteria.POWER_LOW);
-	    
-	    Intent activeIntent = new Intent(this, LocationChangedReceiver.class);
-	    locationListenerPendingIntent = PendingIntent.getBroadcast(this, 0, activeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-	    
-	    lastLocationFinder = PlatformSpecificImplementationFactory.getLastLocationFinder(this);
-	    lastLocationFinder.setChangedLocationListener(oneShotLastLocationUpdateListener);
-	    
-	    locationUpdateRequester = PlatformSpecificImplementationFactory.getLocationUpdateRequester(locationManager);
-	    getLocationAndUpdateIt(true);
-	    
+		userLocationHelper = new UserLocationHelper(this);
 	    super.onCreate();
-	}
-
-    private void updateSettings() {
-        UserPreferences prefs = UserPreferences.newInstance(this);
-        MAX_DISTANCE = prefs.getInt(getString(R.string.prefs_location_distance_key), DEFAULT_RADIUS/2);
-        MAX_TIME = prefs.getLong(getString(R.string.prefs_location_interval_key), AlarmManager.INTERVAL_FIFTEEN_MINUTES);
-    }
-
-
-    protected BroadcastReceiver locProviderDisabledReceiver = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			boolean providerDisabled = !intent.getBooleanExtra(LocationManager.KEY_PROVIDER_ENABLED, false);
-			// Re-register the location listeners using the best available Location Provider.
-			if (providerDisabled)
-				requestLocationUpdates();
-		}
-	};
-		  
-	/**
-	 * If the best Location Provider (usually GPS) is not available when we request location
-	 * updates, this listener will be notified if / when it becomes available. It calls 
-	 * requestLocationUpdates to re-register the location listeners using the better Location
-	 * Provider.
-	 */
-	protected LocationListener bestInactiveLocationProviderListener = new LocationListener() {
-		public void onLocationChanged(Location l) {}
-		public void onProviderDisabled(String provider) {}
-		public void onStatusChanged(String provider, int status, Bundle extras) {}
-		public void onProviderEnabled(String provider) {
-			// Re-register the location listeners using the better Location Provider.
-			requestLocationUpdates();
-		}
-	};
-		  
-		  
-		  
-	protected LocationListener oneShotLastLocationUpdateListener = new LocationListener() {
-		public void onLocationChanged(Location l) {			
-			Log.d(TAG,"onLocationChanged");
-			setCurrentLocation(l);
-		}
-		   
-	    public void onProviderDisabled(String provider) {}
-	    public void onStatusChanged(String provider, int status, Bundle extras) {}
-	    public void onProviderEnabled(String provider) {}
-	};
-	
-	protected void getLocationAndUpdateIt(boolean updateWhenLocationChanges) {
-		// This isn't directly affecting the UI, so put it on a worker thread.
-		AsyncTask<Void, Void, Void> findLastLocationTask = new AsyncTask<Void, Void, Void>() {
-			@Override
-			protected Void doInBackground(Void... params) {
-				// Find the last known location, specifying a required accuracy of within the min distance between updates
-				// and a required latency of the minimum time required between updates.
-
-				Location lastKnownLocation = null;
-                try{
-                        lastLocationFinder.getLastBestLocation(MAX_DISTANCE,
-						System.currentTimeMillis()-MAX_TIME);
-	            } catch (IllegalArgumentException iex){
-	                Logger.error("Location", "Unable to find provider. Need to handle this more intelligent", iex);
-	            }
-				if (lastKnownLocation != null){				
-					setCurrentLocation(lastKnownLocation);
-		        } 
-				else {
-					Log.d(TAG,"Last known location: is null");
-				}
-				
-		        return null;
-		      }
-		    };
-		    
-	    findLastLocationTask.execute();
-		    
-	    // If we have requested location updates, turn them on here.
-	    toggleUpdatesWhenLocationChanges(updateWhenLocationChanges);
-	}
-	
-	protected void toggleUpdatesWhenLocationChanges(boolean updateWhenLocationChanges) {		
-		// Start or stop listening for location changes
-		if (updateWhenLocationChanges){
-			requestLocationUpdates();
-        }
-		else  {
-			disableLocationUpdates();
-        }
-	}
-	
-	protected void requestLocationUpdates() {
-	    // Normal updates while activity is visible.
-        try {
-	    locationUpdateRequester.requestLocationUpdates(MAX_TIME, MAX_DISTANCE, criteria, locationListenerPendingIntent);
-	    
-	    // Register a receiver that listens for when the provider I'm using has been disabled. 
-	    IntentFilter intentFilter = new IntentFilter(LocationChangedReceiver.ACTIVE_LOCATION_UPDATE_PROVIDER_DISABLED);
-	    registerReceiver(locProviderDisabledReceiver, intentFilter);
-
-	    // Register a receiver that listens for when a better provider than I'm using becomes available.
-	    String bestProvider = locationManager.getBestProvider(criteria, false);
-	    String bestAvailableProvider = locationManager.getBestProvider(criteria, true);
-	    if (bestProvider != null && !bestProvider.equals(bestAvailableProvider)) {
-	      locationManager.requestLocationUpdates(bestProvider, 0, 0, bestInactiveLocationProviderListener, getMainLooper());
-	    }
-        } catch (IllegalArgumentException iex){
-            Logger.error("Location", "Unable to find provider. Need to handle this more intelligent", iex);
-        }
-	  }
-	  
-	  /**
-	   * Stop listening for location updates
-	   */
-	protected void disableLocationUpdates() {
-        try {
-		    unregisterReceiver(locProviderDisabledReceiver);
-        } catch (IllegalArgumentException ex){
-            //do nothing
-        }
-		locationManager.removeUpdates(locationListenerPendingIntent);
-		locationManager.removeUpdates(bestInactiveLocationProviderListener);	    
-		lastLocationFinder.cancel();
 	}
 
 	private ScheduledExecutorService scheduler;
@@ -248,7 +91,7 @@ public class LocationService extends Service {
         } catch (IllegalArgumentException ex){
             //do nothing
         }
-		disableLocationUpdates();
+		userLocationHelper.disableLocationUpdates();
 		scheduler.shutdown();
 		scheduler = null;	
 		super.onDestroy();
@@ -261,8 +104,8 @@ public class LocationService extends Service {
 			if (CustomMapActivity.ACTION_GET_POINTS.equals(intent.getAction())){
 				forceUpdatePoints();
 			}  else if (SettingsActivity.ACTION_SETTINGS_LOCATION_UPDATED.equals(intent.getAction())){
-                updateSettings();
-                requestLocationUpdates();
+				userLocationHelper.updateSettings();
+				userLocationHelper.requestLocationUpdates();
             }
 			
 		}
@@ -317,18 +160,15 @@ public class LocationService extends Service {
 			newCoordinates.add(new Coordinate(coordinate.getId(), coordinate.getCreator(), new Date(), 
 					coordinate.getLat()+dlat, coordinate.getLon()+dlon, coordinate.getAccuracy()));
 		}
-		if (currentLocation != null) {
+		if (userLocationHelper != null && userLocationHelper.getCurrentLocation() != null) {
+			Location location = userLocationHelper.getCurrentLocation();
 			newCoordinates.set(0, new Coordinate("-1",
                     DzigApplication.userManager().getCurrentUser(),
                     new Date(),
-                    currentLocation.getLatitude(),
-                    currentLocation.getLongitude(),
-                    currentLocation.getAccuracy()));
+                    location.getLatitude(),
+                    location.getLongitude(),
+                    location.getAccuracy()));
 		}
 		coordinates = newCoordinates;		
-	}
-	
-	private synchronized void setCurrentLocation(Location l){
-		currentLocation = l;
 	}
 }

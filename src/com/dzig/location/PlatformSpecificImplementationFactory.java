@@ -5,7 +5,7 @@ import com.dzig.utils.LocationConstants;
 import android.content.Context;
 import android.location.LocationManager;
 
-public class PlatformSpecificImplementationFactory {
+class PlatformSpecificImplementationFactory {
 	 /**
 	   * Create a new LastLocationFinder instance
 	   * @param context Context

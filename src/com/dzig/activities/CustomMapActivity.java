@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -14,11 +15,14 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 
 import com.dzig.R;
+import com.dzig.loader.GetCoordinatesAsyncTask;
 import com.dzig.model.Coordinate;
+import com.dzig.model.CoordinatesDb;
 import com.dzig.utils.Logger;
 import com.dzig.utils.UserIconHelper;
 import com.google.android.maps.GeoPoint;
@@ -43,6 +47,7 @@ public class CustomMapActivity extends MapActivity {
 	private MapOverlay mapOverlay;
 	private MyLocationOverlay mapOverlay2;
 	private UserIconHelper userIconHelper;
+	private AsyncTask<?,?,?> loader = 
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -224,4 +229,6 @@ public class CustomMapActivity extends MapActivity {
 		}
 		
 	}
+	
+	
 }
